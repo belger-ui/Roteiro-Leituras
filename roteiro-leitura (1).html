@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiro de Leituras</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1510;
+    --faded: #6b6057;
+    --accent: #8b3a1a;
+    --bg: #f7f3ed;
+    --rule: #d4ccc3;
+    --pair-bg: #f0ebe3;
+    --read-bg: #eaf2e8;
+    --read-border: #4a7c4e;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    padding: 0 1.5rem;
+  }
+
+  .page { max-width: 680px; margin: 0 auto; padding: 5rem 0 8rem; }
+
+  header { border-bottom: 1px solid var(--rule); padding-bottom: 2.5rem; margin-bottom: 3.5rem; }
+
+  .site-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--faded); margin-bottom: 1.8rem;
+  }
+
+  h1 { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 600; line-height: 1.25; margin-bottom: .8rem; }
+  .subtitle { color: var(--faded); font-style: italic; font-size: 1rem; }
+
+  /* Progress */
+  .progress-wrap { margin-top: 2rem; display: flex; align-items: center; gap: 1rem; }
+  .progress-bar-bg { flex: 1; height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--read-border); border-radius: 2px; transition: width .4s ease; width: 0%; }
+  .progress-text { font-size: .82rem; color: var(--faded); font-style: italic; white-space: nowrap; }
+
+  .intro { margin-bottom: 3.5rem; color: var(--faded); font-size: 1rem; border-left: 2px solid var(--accent); padding-left: 1.2rem; }
+
+  .section-label {
+    font-family: 'Playfair Display', serif; font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--faded); margin-bottom: 2.2rem; display: flex; align-items: center; gap: 1rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+  /* Pair */
+  .pair {
+    margin-bottom: 2.8rem; padding: 1.6rem 1.8rem;
+    background: var(--pair-bg); border-left: 3px solid var(--accent);
+    transition: background .3s ease, border-color .3s ease;
+  }
+  .pair.all-read { background: var(--read-bg); border-left-color: var(--read-border); }
+
+  .pair-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.4rem; }
+  .pair-number { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-family: 'Playfair Display', serif; display: block; margin-bottom: .2rem; }
+  .pair-theme { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--ink); }
+
+  /* Book */
+  .book { margin-bottom: 1.4rem; padding-bottom: 1.4rem; border-bottom: 1px dashed var(--rule); }
+  .book:last-of-type { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+  .book-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: .3rem; }
+  .book-title { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1.05rem; color: var(--ink); line-height: 1.3; }
+  .book-author { color: var(--faded); font-style: italic; font-size: .9rem; margin-bottom: .5rem; }
+  .book-summary { font-size: .93rem; color: #4a4038; line-height: 1.65; }
+
+  /* Read btn */
+  .read-btn {
+    flex-shrink: 0; border: 1px solid var(--rule); background: transparent; cursor: pointer;
+    font-family: 'EB Garamond', serif; font-size: .78rem; letter-spacing: .08em;
+    padding: .22rem .7rem; border-radius: 2px; color: var(--faded);
+    transition: all .2s ease; white-space: nowrap; display: flex; align-items: center; gap: .3rem; margin-top: .15rem;
+  }
+  .read-btn:hover { border-color: var(--read-border); color: var(--read-border); }
+  .read-btn.is-read { border-color: var(--read-border); background: var(--read-border); color: white; }
+
+  /* Highlights */
+  .highlights {
+    margin-top: .9rem; padding: .9rem 1rem;
+    background: rgba(255,255,255,.55); border-left: 2px solid var(--read-border);
+    display: none;
+  }
+  .highlights.visible { display: block; animation: fadeSlide .3s ease; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .highlights-label {
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--read-border); margin-bottom: .6rem; font-family: 'Playfair Display', serif;
+  }
+  .highlights ul { list-style: none; }
+  .highlights ul li {
+    font-size: .88rem; color: #3a3028; font-style: italic;
+    padding: .4rem 0; border-bottom: 1px solid rgba(212,204,195,.5); line-height: 1.6;
+  }
+  .highlights ul li:last-child { border-bottom: none; }
+  .highlights ul li::before { content: '"'; color: var(--read-border); font-size: 1.1em; margin-right: .2rem; }
+
+  .pair-rationale {
+    font-size: .88rem; color: var(--faded); font-style: italic;
+    margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--rule);
+  }
+
+  /* Solo */
+  .solo {
+    margin-top: 4rem; margin-bottom: 3rem; padding: 1.6rem 1.8rem;
+    background: var(--pair-bg); border-left: 3px solid var(--accent);
+    transition: background .3s ease, border-color .3s ease;
+  }
+  .solo.all-read { background: var(--read-bg); border-left-color: var(--read-border); }
+
+  /* Table */
+  .summary-table-wrap { margin-top: 4rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  th { text-align: left; padding: .5rem .6rem; color: var(--faded); font-weight: 400; font-style: italic; border-bottom: 1px solid var(--rule); }
+  td { padding: .55rem .6rem; border-bottom: 1px solid rgba(212,204,195,.4); vertical-align: middle; }
+
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); display: inline-block; transition: background .2s; }
+  .status-dot.read { background: var(--read-border); }
+
+  footer { margin-top: 5rem; border-top: 1px solid var(--rule); padding-top: 2rem; font-size: .88rem; color: var(--faded); font-style: italic; }
+  footer a { color: var(--faded); }
+
+  @media (max-width: 480px) {
+    body { font-size: 16px; }
+    h1 { font-size: 1.7rem; }
+    .pair, .solo { padding: 1.2rem 1.2rem; }
+    .book-top { flex-direction: column; }
+    .read-btn { align-self: flex-end; }
+  }
+
+  .highlights-label.kindle { color: #8B6914; font-size:.7rem; letter-spacing:.12em; }
+  .highlights-label.kindle::before { content: '◈ '; }
+  .cross-insight {
+    margin: 1.2rem 0 0; padding: .9rem 1.1rem; border-radius:4px;
+    background: #f5f0e8; border-left: 2px solid var(--accent);
+    font-size: .83rem; color: #5a4a3a; line-height: 1.6;
+  }
+  .cross-insight-title { font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:.4rem; }
+  .orbit-section { margin:2.4rem 0 0; }
+  .orbit-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:1.2rem; }
+  @media(max-width:700px){ .orbit-grid { grid-template-columns:1fr; } }
+  .orbit-card { background:#faf8f3; border:1px solid #ddd0b8; border-radius:6px; padding:1rem 1.1rem; }
+  .orbit-card-title { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:#3a2e22; margin-bottom:.2rem; }
+  .orbit-card-author { font-size:.72rem; color:var(--faded); letter-spacing:.06em; margin-bottom:.5rem; }
+  .orbit-card-connection { font-size:.78rem; color:#5a4a3a; line-height:1.55; }
+  .orbit-card-tag { display:inline-block; font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); background:#f0e8d5; border-radius:2px; padding:.1rem .4rem; margin-top:.5rem; }
+
+
+  /* ─── TABS ─────────────────────────────────── */
+  .tab-nav {
+    display: flex; gap: 0; margin: 2rem 0 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tab-btn {
+    font-family: 'Playfair Display', serif; font-size: .78rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    padding: .55rem 1.1rem; color: var(--faded);
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: color .2s, border-color .2s;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; padding-top: 2.8rem; }
+  .tab-panel.active { display: block; }
+
+  /* ─── DAILY GRIFO ─────────────────────────── */
+  .daily-grifo {
+    margin: 1.8rem 0 0;
+    padding: .9rem 1.1rem .9rem 1.4rem;
+    background: #f5f0e8;
+    border-left: 3px solid var(--accent);
+    position: relative;
+  }
+  .daily-grifo-label {
+    font-size: .68rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent); font-family: 'Playfair Display', serif;
+    margin-bottom: .35rem; display: flex; align-items: center; gap: .6rem;
+  }
+  .daily-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); display: inline-block;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; } 50% { opacity:.3; }
+  }
+  .daily-grifo-text {
+    font-style: italic; font-size: .92rem; color: #3a3028; line-height: 1.65;
+  }
+  .daily-grifo-source {
+    font-size: .75rem; color: var(--faded); margin-top: .3rem;
+  }
+
+  /* ─── INSIGHTS TAB ────────────────────────── */
+  .insight-block {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .insight-block:last-child { border-bottom: none; }
+  .insight-book-title {
+    font-family: 'Playfair Display', serif; font-weight: 600;
+    font-size: 1.1rem; color: var(--ink); margin-bottom: .15rem;
+  }
+  .insight-book-meta {
+    font-size: .78rem; color: var(--faded); font-style: italic;
+    margin-bottom: .9rem;
+  }
+  .insight-list { list-style: none; }
+  .insight-list li {
+    font-size: .9rem; color: #3a3028; font-style: italic;
+    padding: .45rem 0; border-bottom: 1px solid rgba(212,204,195,.4);
+    line-height: 1.65;
+  }
+  .insight-list li:last-child { border-bottom: none; }
+  .insight-list li::before { content: '"'; color: var(--accent); margin-right: .2rem; }
+  .cross-block {
+    background: #f5f0e8; border-left: 2px solid var(--accent);
+    padding: .9rem 1.1rem; border-radius: 3px;
+    margin-bottom: 1.4rem; font-size: .85rem; color: #4a3a2a; line-height: 1.65;
+  }
+  .cross-block-title {
+    font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); font-family: 'Playfair Display', serif;
+    margin-bottom: .4rem; font-weight: 600;
+  }
+  .insights-sub-label {
+    font-family: 'Playfair Display', serif; font-size: 10px;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: var(--faded); margin: 2rem 0 1.4rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .insights-sub-label::after { content:''; flex:1; height:1px; background: var(--rule); }
+
+  /* ─── GRIFOS TAB ──────────────────────────── */
+  .grifo-book {
+    margin-bottom: 2.8rem;
+  }
+  .grifo-book-header {
+    display: flex; align-items: baseline; gap: .8rem;
+    margin-bottom: 1rem; padding-bottom: .6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .grifo-book-name {
+    font-family: 'Playfair Display', serif; font-weight: 600;
+    font-size: 1.05rem; color: var(--ink);
+  }
+  .grifo-count {
+    font-size: .72rem; color: var(--faded); font-style: italic;
+  }
+  .grifo-item {
+    padding: .65rem 0 .65rem 1rem;
+    border-left: 2px solid transparent;
+    border-bottom: 1px solid rgba(212,204,195,.35);
+    font-size: .9rem; font-style: italic; color: #3a3028;
+    line-height: 1.65;
+    cursor: pointer; transition: border-color .15s;
+  }
+  .grifo-item:hover { border-left-color: var(--accent); }
+  .grifo-item:last-child { border-bottom: none; }
+  .grifo-item::before { content: '"'; color: var(--accent); font-size: 1.1em; }
+
+  /* ─── GITHUB EXPORT ───────────────────────── */
+  .export-wrap {
+    margin: 3rem 0 0; padding: 1.4rem 1.6rem;
+    background: #f0ebe3; border: 1px solid var(--rule); border-radius:4px;
+  }
+  .export-title {
+    font-family: 'Playfair Display', serif; font-size: .9rem; font-weight: 600;
+    margin-bottom: .5rem; color: var(--ink);
+  }
+  .export-desc {
+    font-size: .82rem; color: var(--faded); line-height: 1.6; margin-bottom: 1rem;
+  }
+  .export-steps {
+    font-size: .8rem; color: #5a4a3a; line-height: 1.8;
+    background: rgba(255,255,255,.6); padding: .8rem 1rem;
+    border-radius: 3px; margin-bottom: 1rem; font-family: 'EB Garamond', serif;
+  }
+  .export-steps code {
+    font-family: 'Courier New', monospace; font-size: .75rem;
+    background: #e8e0d0; padding: .1rem .35rem; border-radius: 2px; color: var(--accent);
+  }
+  .btn-export {
+    font-family: 'Playfair Display', serif; font-size: .8rem; letter-spacing: .1em;
+    text-transform: uppercase; border: 1px solid var(--accent);
+    background: var(--accent); color: white; cursor: pointer;
+    padding: .5rem 1.2rem; border-radius: 2px; transition: opacity .2s;
+  }
+  .btn-export:hover { opacity: .85; }
+
+  @media(max-width:480px){
+    .tab-btn { padding: .5rem .7rem; font-size: .72rem; }
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="site-name">Roteiro Pessoal de Leituras</div>
+  <h1>Quinze Livros, Sete Duplas</h1>
+  <p class="subtitle">Uma sequência para quem pensa em sistemas, riscos e performance</p>
+  <div class="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <div class="progress-text" id="progressText">0 de 15 lidos</div>
+  </div>
+</header>
+
+<div class="daily-grifo" id="dailyGrifo">
+  <div class="daily-grifo-label"><span class="daily-dot"></span> Grifo do dia</div>
+  <div class="daily-grifo-text" id="dailyGrifoText">…</div>
+  <div class="daily-grifo-source" id="dailyGrifoSource"></div>
+</div>
+
+<nav class="tab-nav" role="tablist">
+  <button class="tab-btn active" data-tab="roteiro" role="tab">Roteiro</button>
+  <button class="tab-btn" data-tab="insights" role="tab">Insights</button>
+  <button class="tab-btn" data-tab="grifos" role="tab">Grifos</button>
+</nav>
+
+<div id="tab-roteiro" class="tab-panel active">
+<div class="intro">
+  Dois livros ao mesmo tempo, sempre. Um desafia, o outro ancora. Clique em <strong>marcar lido</strong> para registrar o progresso — os principais insights de cada livro aparecem ao marcar. O estado é salvo automaticamente no navegador.
+</div>
+
+<div class="section-label">Duplas · Roteiro</div>
+
+<!-- =================== DUPLA 01 =================== -->
+<div class="pair" id="pair-1">
+  <div class="pair-header">
+    <div><span class="pair-number">Dupla 01</span><div class="pair-theme">Probabilidade &amp; Influência</div></div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Thinking in Bets</div><div class="book-author">Annie Duke</div></div>
+      <button class="read-btn" data-book="thinking-bets"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">A ex-campeã mundial de poker separa dois conceitos que o cérebro confunde constantemente: a qualidade da decisão e a qualidade do resultado. Em ambientes de incerteza — mercados de crédito, apostas esportivas — uma decisão excelente pode produzir um resultado ruim, e vice-versa. Duke chama esse equívoco de <em>resulting</em> e propõe transformar cada decisão em uma aposta explícita para forçar honestidade intelectual.</div>
+    <div class="highlights" id="hl-thinking-bets">
+      <div class="highlights-label kindle">Seus grifos do Kindle</div>
+      <ul>
+        <li>O que caracteriza uma ótima decisão não é um ótimo resultado. Uma ótima decisão é consequência de um bom processo.</li>
+        <li>A vida é mais como o pôquer do que como o xadrez: você pode tomar a decisão mais ponderada e ainda assim se dar mal.</li>
+        <li>"Todo processo de 10-10-10 começa com uma pergunta: quais são as consequências de cada opção em dez minutos? Em dez meses? Em dez anos?"</li>
+        <li>Pré-mortem: incorporar a visualização negativa nos torna mais propensos a atingir nossos objetivos do que a visualização positiva.</li>
+        <li>Quanto melhor você é com os números, melhor você fica em "distorcer" esses números para confirmar suas crenças.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Armas da Persuasão 2.0</div><div class="book-author">Robert Cialdini</div></div>
+      <button class="read-btn" data-book="armas"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">A versão atualizada do clássico de 1984, com um sétimo princípio adicionado: a unidade — pertencimento a um grupo que vai além da simples simpatia. Para quem estrutura produtos de crédito ou conduz roadshows, entender os gatilhos automáticos de decisão do outro lado não é manipulação — é fluência em comunicação.</div>
+    <div class="highlights" id="hl-armas">
+      <div class="highlights-label kindle">Seus grifos do Kindle</div>
+      <ul>
+        <li>As pessoas simplesmente gostam de ter motivos para o que fazem — mesmo que esses motivos não sejam os reais.</li>
+        <li>Princípio do contraste: venda o terno primeiro, porque depois os suéteres caros não parecem tão caros. A referência muda tudo.</li>
+        <li>A regra diz que devemos tentar retribuir o que outra pessoa nos forneceu — e isso cria uma obrigação que funciona mesmo quando a dívida foi imposta.</li>
+        <li>Amostras grátis são presentes. E presentes acionam a lei da reciprocidade — transformando generosidade em jiu-jitsu comercial.</li>
+        <li>"Quero que eu concorde com seu pedido? Primeiro me faça um pedido maior — que eu vá recusar. Então faça o real." A concessão parece menor em contraste.
+      </ul>
+    </div>
+  </div>
+
+  <div class="pair-rationale">Juntos, formam uma visão completa do processo decisório: como você decide mal (Duke) e como outros são convencidos a decidir de um jeito específico (Cialdini).</div>
+  <div class="cross-insight">
+    <div class="cross-insight-title">Insight cruzado · Dupla 01</div>
+    Duke descreve o <em>resulting</em> — julgar a decisão pelo resultado. Cialdini descreve o <em>contraste</em> — o contexto muda a percepção do valor. Os dois são o mesmo fenômeno visto de ângulos opostos: a mente humana não avalia em absoluto, avalia em relação. Em mercados de crédito, isso é devastador: um spread que parece bom depois de um cenário de estresse pode ser péssimo em termos absolutos.
+    <br><br>Ambos conectam com <strong>Previsivelmente Irracional</strong> (Dan Ariely), onde você tem 129 grifos — o triângulo está completo na sua estante.
+  </div>
+</div>
+
+<!-- =================== DUPLA 02 =================== -->
+<div class="pair" id="pair-2">
+  <div class="pair-header">
+    <div><span class="pair-number">Dupla 02</span><div class="pair-theme">O Corpo como Sinal</div></div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Nação Dopamina</div><div class="book-author">Anna Lembke</div></div>
+      <button class="read-btn" data-book="dopamina"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">A psiquiatra chefe de Stanford explica como a balança prazer-dor funciona no cérebro. A abundância moderna — telas, estímulos, redes sociais — mantém a balança permanentemente inclinada, produzindo anedonia crônica: incapacidade de sentir prazer no ordinário. Lembke propõe abstinência deliberada como reset neurológico.</div>
+    <div class="highlights" id="hl-dopamina">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>A balança prazer-dor: cada pico de prazer cria um vale de dor equivalente depois. O cérebro busca homeostase.</li>
+        <li>Dopamina não é sobre prazer — é sobre antecipação e busca. O querer é diferente do gostar.</li>
+        <li>Abstinência de 30 dias como reset neurológico: a balança volta ao zero e o prazer ordinário volta a funcionar.</li>
+        <li>Vício não é fraqueza moral — é adaptação neurológica a estímulos supernormais.</li>
+        <li>Auto-ligação (self-binding): criar fricção deliberada entre você e o comportamento compulsivo. Não depender de força de vontade.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">A Crise do Conforto</div><div class="book-author">Michael Easter</div></div>
+      <button class="read-btn" data-book="conforto"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">Easter passou 33 dias sozinho no Alasca sem conexão ou conforto moderno. O livro combina essa experiência com ciência do comportamento: o corpo e a mente evoluíram para lidar com dificuldade, e a facilidade total não é o objetivo de design que parece ser. Boa companhia para qualquer um que leva a sério treino e nutrição.</div>
+    <div class="highlights" id="hl-conforto">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>Misogi: desafio anual com 50% de chance de falhar. O objetivo não é o sucesso — é expandir o que você considera possível.</li>
+        <li>Desconforto deliberado (frio, fome, esforço) reduz ansiedade de forma mais duradoura que conforto imediato.</li>
+        <li>Tédio é um recurso: sem estímulos externos, o cérebro gera insight, criatividade e autoconhecimento.</li>
+        <li>Eliminamos todos os problemas que nos tornaram resilientes. A solução é reintroduzi-los artificialmente.</li>
+        <li>Exposição regular a ambientes naturais não é luxo — é manutenção da saúde cognitiva.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pair-rationale">Lembke dá o diagnóstico neurológico; Easter dá o remédio prático. Juntos, formam o argumento mais convincente para manter disciplina de treino intacta.</div>
+</div>
+
+<!-- =================== DUPLA 03 =================== -->
+<div class="pair" id="pair-3">
+  <div class="pair-header">
+    <div><span class="pair-number">Dupla 03</span><div class="pair-theme">Filosofia &amp; Cognição</div></div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Café com Sêneca</div><div class="book-author">Leandro Karnal</div></div>
+      <button class="read-btn" data-book="seneca"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">Karnal apresenta o estoicismo através de Sêneca — o filósofo que viveu na corte de Nero, acumulou fortuna imensa e escreveu sobre a vanidade de tudo isso. A contradição é o ponto: Sêneca não era um asceta distante, era um homem no poder tentando pensar claramente sobre o poder. Seus temas — tempo, morte, amizade, riqueza — soam contemporâneos porque são permanentes.</div>
+    <div class="highlights" id="hl-seneca">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>"Omnia aliena sunt, tempus tantum nostrum est." Tudo é alheio; só o tempo é nosso. E ainda assim o desperdiçamos com mais generosidade que qualquer outro bem.</li>
+        <li>Memento mori não é pessimismo — é clareza. Lembrar a morte concentra o que importa.</li>
+        <li>Amizade verdadeira: você pode confiar tudo ao amigo antes de considerá-lo amigo, não depois.</li>
+        <li>A dependência da riqueza é o problema, não a riqueza. Sêneca testava a si mesmo imaginando a pobreza periodicamente.</li>
+        <li>Recuo filosófico: criar espaço interno independente das circunstâncias externas. Liberdade interior como projeto deliberado.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">A Arte de Pensar Claramente</div><div class="book-author">Rolf Dobelli</div></div>
+      <button class="read-btn" data-book="pensar"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">Noventa e nove erros cognitivos, um por capítulo, todos curtos o suficiente para serem lidos num semáforo. A acumulação é o valor — ao fim do livro, você tem um checklist mental completo. Para quem trabalha em crédito estruturado e em apostas esportivas, os capítulos sobre viés de confirmação, custo afundado e ilusão de controle valem o livro inteiro.</div>
+    <div class="highlights" id="hl-pensar">
+      <div class="highlights-label kindle">Seus grifos do Kindle</div>
+      <ul>
+        <li>Viés de confirmação: buscamos informações que confirmam o que já acreditamos. O antídoto é buscar ativamente o contraditório.</li>
+        <li>Custo afundado: o dinheiro já perdido não deve influenciar a próxima decisão. Mas influencia quase sempre.</li>
+        <li>Ilusão de controle: superestimamos nossa influência em eventos aleatórios — especialmente em mercados e esportes.</li>
+        <li>Viés da sobrevivência: só vemos os que tiveram sucesso, não os que faliram com a mesma estratégia.</li>
+        <li>Efeito manada: em incerteza, seguimos o grupo. O grupo frequentemente está errado nos momentos mais importantes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pair-rationale">Sêneca diz o que é uma vida bem vivida; Dobelli lista os obstáculos mentais que impedem de alcançá-la. Filosofia e epistemologia num bloco coerente.</div>
+  <div class="cross-insight">
+    <div class="cross-insight-title">Insight cruzado · Dupla 03</div>
+    Dobelli cataloga 99 erros cognitivos — incluindo o efeito halo, a invisibilidade dos caminhos alternativos, e o risco nunca diretamente identificável (seus 9 grifos). Sêneca antecipou isso 2.000 anos antes com uma solução diferente: em vez de corrigir o pensamento passo a passo, treinar o caráter para que esses erros importem menos. A cognição estoica não é livre de vieses — é robusta o suficiente para não quebrar por causa deles.
+    <br><br>Os dois também dialogam com Thinking in Bets: Duke reformula, Dobelli classifica, Sêneca aceita — três respostas distintas ao mesmo problema.
+  </div>
+</div>
+
+<!-- =================== DUPLA 04 =================== -->
+<div class="pair" id="pair-4">
+  <div class="pair-header">
+    <div><span class="pair-number">Dupla 04</span><div class="pair-theme">O Mundo Interior</div></div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Não Há Partes Ruins</div><div class="book-author">Richard Schwartz</div></div>
+      <button class="read-btn" data-book="partes"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">O criador do IFS propõe que a mente é um sistema de "partes" — subpersonalidades com suas próprias histórias e estratégias. Não há partes ruins: há partes que aprenderam estratégias inadequadas para proteger o sistema. A prática é radical: em vez de lutar contra os padrões internos, você se relaciona com eles com curiosidade e compaixão.</div>
+    <div class="highlights" id="hl-partes">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>Multiplicidade da mente: não há uma voz interna — há muitas. Identificar qual parte está falando muda a qualidade da resposta.</li>
+        <li>Partes gerenciadoras vs. exiladas vs. bombeiros: cada papel interno tem uma função — entender o papel dissolve o julgamento.</li>
+        <li>Self como líder interno: há um Self que não é traumatizado e que pode liderar o sistema com compaixão.</li>
+        <li>Auto-sabotagem não é fraqueza — é uma parte tentando proteger outra mais vulnerável.</li>
+        <li>"Como você se sente em relação a essa parte?" muda completamente o que acontece a seguir.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Felicidade Por Acaso</div><div class="book-author">Daniel Gilbert</div></div>
+      <button class="read-btn" data-book="felicidade"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">Gilbert, psicólogo de Harvard, demonstra que somos sistematicamente ruins em prever o que vai nos fazer felizes. O sistema imunológico psicológico — nossa capacidade de racionalizar qualquer resultado — é ao mesmo tempo um superpoder e um sistema de engano. Escrito com humor real e ciência séria.</div>
+    <div class="highlights" id="hl-felicidade">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>Previsão afetiva falha: imaginamos futuros estados emocionais de forma sistematicamente imprecisa — tanto positivos quanto negativos.</li>
+        <li>Sistema imunológico psicológico: o cérebro fabrica satisfação em quase qualquer situação. Isso nos engana sobre o que realmente queremos.</li>
+        <li>Adaptação hedônica: nos adaptamos rapidamente a conquistas. O prazer esperado se dissipa mais rápido que o previsto.</li>
+        <li>A liberdade tem um custo cognitivo: mais opções aumentam o arrependimento antecipado e reduzem a satisfação com a escolha feita.</li>
+        <li>Experiências > objetos: o prazer de experiências é mais duradouro porque são mais difíceis de comparar e avaliar.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pair-rationale">Schwartz olha para dentro com profundidade clínica; Gilbert olha de fora com ironia acadêmica. Juntos, constroem um mapa do self mais honesto que qualquer autoajuda convencional.</div>
+</div>
+
+<!-- =================== DUPLA 05 =================== -->
+<div class="pair" id="pair-5">
+  <div class="pair-header">
+    <div><span class="pair-number">Dupla 05</span><div class="pair-theme">Dois Construtores de Mundo</div></div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Steve Jobs</div><div class="book-author">Walter Isaacson</div></div>
+      <button class="read-btn" data-book="jobs"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">A biografia autorizada de um homem que recusava o possível. O campo de distorção da realidade — sua capacidade de convencer todos de que o impossível era realizável — gerou produtos extraordinários e uma trilha de destruição interpessoal. Isaacson é mais honesto sobre os defeitos do que Jobs esperava ao autorizar a pesquisa.</div>
+    <div class="highlights" id="hl-jobs">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>Campo de distorção da realidade: sustentar convicção irracional pode mover montanhas — desde que haja talento suficiente para entregar.</li>
+        <li>Foco como filosofia: Jobs estava tão orgulhoso do que a Apple não fez quanto do que fez. Eliminar é mais difícil que adicionar.</li>
+        <li>Produto e embalagem são inseparáveis: a experiência de abrir um produto Apple é projetada com o mesmo cuidado que o produto.</li>
+        <li>Interseção entre tecnologia e humanidades: as melhores ideias surgiram na fronteira entre os dois campos, não dentro de nenhum.</li>
+        <li>Recusa do "bom o suficiente": mesmo em componentes invisíveis, Jobs exigia elegância. A estética era um valor moral.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Elon Musk</div><div class="book-author">Walter Isaacson</div></div>
+      <button class="read-btn" data-book="musk"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">O mesmo biógrafo, um temperamento completamente diferente. Musk não apenas aceita o caos — usa-o como ferramenta de gestão. A velocidade de execução brutal que permite falhar e recomeçar mais rápido que a concorrência é o argumento central. Para quem acompanha Tesla, SpaceX e cripto, o livro tem uma camada geopolítica extra.</div>
+    <div class="highlights" id="hl-musk">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>Questione os requisitos: antes de otimizar um processo, pergunte se ele deveria existir. 20% das especificações são desnecessárias.</li>
+        <li>Velocidade acima de perfeição: lançar, falhar, iterar é mais eficiente que planejar até a perfeição.</li>
+        <li>Modo demo permanente: Musk trata toda dificuldade como um problema de engenharia sem solução ainda, não como impossibilidade.</li>
+        <li>Integração vertical radical: controlar cada elo da cadeia elimina dependências que o mercado não consegue replicar rapidamente.</li>
+        <li>Tolerância ao risco existencial: Musk apostou a fortuna inteira em Tesla e SpaceX simultaneamente. O risco calculado em escala absurda.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pair-rationale">Mesmo biógrafo, dois temperamentos opostos. Jobs controlava o ambiente; Musk o incendeia. A comparação implícita é o livro mais interessante que você cria na cabeça ao ler os dois ao mesmo tempo.</div>
+</div>
+
+<!-- =================== DUPLA 06 =================== -->
+<div class="pair" id="pair-6">
+  <div class="pair-header">
+    <div><span class="pair-number">Dupla 06</span><div class="pair-theme">Alto Desempenho &amp; Tênis</div></div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Open</div><div class="book-author">Andre Agassi &amp; J.R. Moehringer</div></div>
+      <button class="read-btn" data-book="agassi"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">A melhor autobiografia esportiva já escrita. Agassi odiava tênis durante grande parte da carreira e ainda assim dominou o esporte por duas décadas. A honestidade sobre o ódio pela própria profissão, o vício em metanfetamina, a transformação depois dos trinta — narrada por Moehringer com prosa raramente encontrada em não-ficção. Para quem joga com backhand de uma mão, há revelações sobre mentalidade competitiva que nenhum livro de psicologia esportiva alcança.</div>
+    <div class="highlights" id="hl-agassi">
+      <div class="highlights-label kindle">Seus grifos do Kindle</div>
+      <ul>
+        <li>"A imagem é tudo" — o slogan que odiava — virou grilheta. Construir uma persona para o mercado pode aprisionar mais do que liberar.</li>
+        <li>Motivação extrínseca não sustenta desempenho de elite. Agassi floresceu quando encontrou razões próprias para jogar.</li>
+        <li>O corpo sabe antes da mente: jogou anos com dor nas costas que poderia tê-lo paralisado. O limite físico real é diferente do imaginado.</li>
+        <li>Rivalidade como combustível: precisar superar alguém específico é diferente de querer ganhar em abstrato.</li>
+        <li>Reinvenção depois dos 30: a carreira mais sólida veio depois dos fracassos. A maturidade técnica e emocional chegou juntas.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Excelência Interior</div><div class="book-author">Michael Gervais</div></div>
+      <button class="read-btn" data-book="excelencia"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">O psicólogo que trabalhou com atletas olímpicos e times da NFL organiza em framework aplicável o que Agassi viveu de forma instintiva. O conceito central é FOPO — <em>fear of people's opinions</em> — como o maior obstáculo ao desempenho de elite. Quando a principal preocupação é o que os outros vão pensar, você já perdeu metade da atenção disponível.</div>
+    <div class="highlights" id="hl-excelencia">
+      <div class="highlights-label kindle">Seus grifos do Kindle</div>
+      <ul>
+        <li>FOPO (Fear of People's Opinions): o medo da opinião alheia é silencioso e devastador. Reconhecê-lo já reduz seu poder.</li>
+        <li>Filosofia pessoal: saber claramente o que você valoriza elimina a necessidade de aprovação externa como bússola.</li>
+        <li>Processo sobre resultado: focar no que está sob seu controle é a única forma de sustentar alta performance.</li>
+        <li>Presente como vantagem competitiva: atletas de elite não estão pensando no placar — estão no próximo ponto.</li>
+        <li>Conversa interna funcional: "próximo ponto" é mais eficaz que qualquer afirmação motivacional.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pair-rationale">Agassi é a experiência bruta de uma carreira inteira; Gervais é o mapa conceitual que permite extrair princípios dela. Ler os dois ao mesmo tempo é ter um coach dentro da cabeça.</div>
+  <div class="cross-insight">
+    <div class="cross-insight-title">Insight cruzado · Dupla 06</div>
+    Gervais: <em>"o fracasso é um sentimento muito antes de se tornar um resultado"</em>. Agassi: <em>"o que você sente não importa; o que o torna valente é o que você faz"</em>. Os dois dizem a mesma coisa de ângulos opostos — Gervais pelo framework, Agassi pela autobiografia. A diferença é que Agassi jogou décadas sem o mapa; Gervais entrega o mapa antes do jogo começar.
+    <br><br>Conecta com <strong>Servir Para Vencer</strong> de Djokovic, que você já leu — onde a dieta e a presença mental são tratadas como o mesmo sistema.
+  </div>
+</div>
+
+<!-- =================== DUPLA 07 =================== -->
+<div class="pair" id="pair-7">
+  <div class="pair-header">
+    <div><span class="pair-number">Dupla 07</span><div class="pair-theme">Carreira &amp; Identidade</div></div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Por Que Generalistas Vencem Especialistas</div><div class="book-author">David Epstein <em>(Range)</em></div></div>
+      <button class="read-btn" data-book="generalistas"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">Epstein distingue ambientes "kind" (regras claras, feedback imediato — como xadrez) de ambientes "wicked" (regras que mudam, feedback atrasado — como mercados financeiros e a maior parte da vida real). Em ambientes wicked, amplitude de domínios é mais valiosa que especialização profunda. Uma crítica implícita à regra das 10.000 horas de Gladwell.</div>
+    <div class="highlights" id="hl-generalistas">
+      <div class="highlights-label kindle">Seus grifos do Kindle</div>
+      <ul>
+        <li>Ambientes "kind" vs. "wicked": a maior parte da vida real é wicked. O conhecimento de um domínio não transfere automaticamente para outro.</li>
+        <li>Começo tardio como vantagem: explorar mais amplo antes de especializar produz resultados superiores na maioria das carreiras.</li>
+        <li>Pensamento por analogia entre domínios: os melhores geradores de ideias buscam princípios em áreas distintas e os aplicam onde ninguém pensou.</li>
+        <li>Identidade como armadilha: comprometer-se cedo demais com uma identidade profissional fecha portas que seriam a vantagem competitiva real.</li>
+        <li>Desaprendizado ativo é mais difícil que aprender algo novo — e é o que diferencia os grandes generalistas.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Nascente <em>(The Fountainhead)</em></div><div class="book-author">Ayn Rand</div></div>
+      <button class="read-btn" data-book="nascente"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">Howard Roark recusa qualquer compromisso com o gosto coletivo. A filosofia objetivista de Rand é amplamente debatida — e deve ser —, mas Roark como personagem é um argumento emocional poderoso sobre integridade intelectual e o preço de ter uma visão própria. O antagonista Toohey — que usa o altruísmo como ferramenta de poder — é um dos vilões mais inteligentes da literatura americana.</div>
+    <div class="highlights" id="hl-nascente">
+      <div class="highlights-label">Insights do livro</div>
+      <ul>
+        <li>Criador vs. parasita: quem cria valor originalmente vs. quem vive em função da aprovação e da opinião dos outros.</li>
+        <li>Integridade como recusa: Roark declina projetos que exijam comprometer a visão. Inaplicável em muitos contextos — mas o impulso é saudável.</li>
+        <li>Toohey como lição de poder: usar coletividade e altruísmo para controlar é o retrato mais brilhante do poder velado da narrativa.</li>
+        <li>Razão como faculdade primária: para Rand, a emoção é o produto, não o guia. A decisão vem da análise, não do sentimento.</li>
+        <li>Capitular no produto é capitular no self: o trabalho não é separável da identidade.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pair-rationale">Epstein defende o generalista curioso; Rand defende o indivíduo intransigente. Juntos, formam uma visão de carreira que rejeita tanto a especialização cega quanto a conformidade.</div>
+  <div class="cross-insight">
+    <div class="cross-insight-title">Insight cruzado · Dupla 07</div>
+    Seus 41 grifos de Epstein concentram-se num argumento central: <em>"nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta"</em>. Rand vai na direção oposta — o criador radical que recusa qualquer analogia externa como compromisso. A síntese produtiva não é escolher um: é ser relacional na coleta de inputs, intransigente na síntese final.
+    <br><br>Conecta com <strong>Maestria</strong> de Greene (47 grifos seus): o mestrado tardio está exatamente na intersecção dos dois — exploração ampla que eventualmente converge para um núcleo inegociável.
+  </div>
+</div>
+
+<!-- =================== SOLO FINALE =================== -->
+<div class="solo" id="pair-solo">
+  <div class="pair-header">
+    <div><span class="pair-number" style="color:var(--faded)">Finale · Solo</span><div class="pair-theme">Síntese de Tudo</div></div>
+  </div>
+  <div class="book">
+    <div class="book-top">
+      <div><div class="book-title">Leonardo da Vinci</div><div class="book-author">Walter Isaacson</div></div>
+      <button class="read-btn" data-book="leonardo"><span>○</span> marcar lido</button>
+    </div>
+    <div class="book-summary">O último livro, lido sozinho, depois de tudo o que veio antes. Leonardo é o argumento definitivo de Epstein — o generalista supremo. É também a versão oposta de Jobs e Musk: um construtor que frequentemente não terminava o que começava, porque o processo de entender era mais interessante que o produto final. Isaacson fecha a trilogia implícita Jobs-Musk-Leonardo, e este é o mais humano dos três. Reserve-o para o final — você vai lê-lo com olhos diferentes.</div>
+    <div class="highlights" id="hl-leonardo">
+      <div class="highlights-label kindle">Seus grifos do Kindle</div>
+      <ul>
+        <li>A habilidade de conectar disciplinas — artes e ciências, humanidades e tecnologia — é a chave para a inovação, imaginação e genialidade.</li>
+        <li>"Aquele que pode ir à nascente de um rio não vai a um jarro de água." A curiosidade não é sobre respostas — é sobre ir à origem.</li>
+        <li>O gênio dentro de Leonardo era humano; tinha sido forjado por vontade e ambição próprias. Não era um recipiente divino: era construído.</li>
+        <li>Sua habilidade em combinar arte, ciência, tecnologia, humanidades e imaginação persiste até hoje como receita para a criatividade.</li>
+        <li>Seu método era baseado na experimentação, na curiosidade e na habilidade de se admirar com fenômenos nos quais o restante de nós dificilmente presta atenção após a infância.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cross-insight" style="margin-top:1.5rem">
+    <div class="cross-insight-title">Insight cruzado · Finale</div>
+    Leonardo fecha o roteiro porque ele é o argumento vivo de Epstein — o generalista supremo — e ao mesmo tempo a antítese de Rand: ele não terminou quase nada, e ainda assim é o maior. Mas há um nó a explorar: Leonardo é 15 grifos seus. Thinking in Bets é 99. Excelência Interior é 80. A profundidade com que você leu cada livro já é um dado — o roteiro reflete seus interesses reais, não só os declarados.
+  </div>
+</div>
+
+
+<!-- =================== INSIGHTS TAB =================== -->
+<!-- =================== TABELA =================== -->
+<div class="summary-table-wrap">
+  <div class="section-label">Visão Geral</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:2.2rem">#</th>
+        <th>Livro A</th>
+        <th>Livro B</th>
+        <th>Tema</th>
+        <th style="text-align:center;width:3.5rem">Lido</th>
+      </tr>
+    </thead>
+    <tbody id="summaryTable"></tbody>
+  </table>
+</div>
+
+<!-- =================== ÓRBITA =================== -->
+<div class="summary-table-wrap orbit-section">
+  <div class="section-label">Órbita · Já lidos, ainda vivos</div>
+  <p style="font-size:.82rem;color:var(--faded);margin:.5rem 0 1rem;line-height:1.6">Livros que você já leu com muitos grifos no Kindle — e que se conversam diretamente com o roteiro atual.</p>
+  <div class="orbit-grid">
+
+    <div class="orbit-card">
+      <div class="orbit-card-title">Previsivelmente Irracional</div>
+      <div class="orbit-card-author">Dan Ariely · 129 grifos seus</div>
+      <div class="orbit-card-connection">O triângulo com Thinking in Bets e Armas da Persuasão. Ariely fecha a tríade comportamental: Duke explica a decisão ruim, Cialdini como é explorada, Ariely por que é estrutural — e não consertável.</div>
+      <div class="orbit-card-tag">← Dupla 01</div>
+    </div>
+
+    <div class="orbit-card">
+      <div class="orbit-card-title">Almanack of Naval Ravikant</div>
+      <div class="orbit-card-author">Eric Jorgenson · 102 grifos seus</div>
+      <div class="orbit-card-connection">Naval é o Leonardo moderno — engenheiro, filósofo, investidor, leitor voraz. Conecta com Generalistas (amplitudes como vantagem), Excelência Interior (riqueza sem urgência) e Leonardo (curiosidade como sistema).</div>
+      <div class="orbit-card-tag">← Duplas 06, 07, Finale</div>
+    </div>
+
+    <div class="orbit-card">
+      <div class="orbit-card-title">Antifrágil</div>
+      <div class="orbit-card-author">Nassim Taleb · 73 grifos seus</div>
+      <div class="orbit-card-connection">Onde Thinking in Bets para, Antifrágil começa. Duke diz "incorpore a incerteza"; Taleb diz "construa sistemas que melhoram com ela". O passo seguinte natural depois da Dupla 01.</div>
+      <div class="orbit-card-tag">← Dupla 01, 02</div>
+    </div>
+
+    <div class="orbit-card">
+      <div class="orbit-card-title">Dominando o Ciclo de Mercado</div>
+      <div class="orbit-card-author">Howard Marks · 72 grifos seus</div>
+      <div class="orbit-card-connection">O livro mais diretamente ligado ao seu trabalho em crédito. Marks aplica o pensamento probabilístico de Duke aos ciclos — o leitor de Thinking in Bets reconhece a lógica imediatamente.</div>
+      <div class="orbit-card-tag">← Dupla 01, mercados</div>
+    </div>
+
+    <div class="orbit-card">
+      <div class="orbit-card-title">Maestria</div>
+      <div class="orbit-card-author">Robert Greene · 47 grifos seus</div>
+      <div class="orbit-card-connection">A tensão entre Generalistas (Epstein) e Maestria (Greene) é produtiva: Greene argumenta pela especialização longa e profunda, mas no caminho traça exatamente o período de experimentação que Epstein defende.</div>
+      <div class="orbit-card-tag">← Dupla 07, Finale</div>
+    </div>
+
+    <div class="orbit-card">
+      <div class="orbit-card-title">Nexus</div>
+      <div class="orbit-card-author">Yuval Harari · 67 grifos seus</div>
+      <div class="orbit-card-connection">Uma história das redes de informação. Conecta com A Próxima Onda (que está no roteiro) pelo ângulo macro — e com Generalistas pelo argumento de que os grandes saltos sempre vieram da conexão entre domínios, não do aprofundamento dentro deles.</div>
+      <div class="orbit-card-tag">← Dupla 05, Dupla 07</div>
+    </div>
+
+  </div>
+</div>
+
+
+</div><!-- /tab-roteiro -->
+
+<div id="tab-insights" class="tab-panel">
+
+  <div class="insights-sub-label">Conexões entre os livros</div>
+
+  <div class="cross-block">
+    <div class="cross-block-title">Insight cruzado · Dupla 01 — Probabilidade &amp; Influência</div>
+    Duke descreve o <em>resulting</em> — julgar a decisão pelo resultado. Cialdini descreve o <em>contraste</em> — o contexto muda a percepção do valor. Os dois são o mesmo fenômeno visto de ângulos opostos: a mente humana não avalia em absoluto, avalia em relação. Em mercados de crédito, isso é devastador: um spread que parece bom depois de um cenário de estresse pode ser péssimo em termos absolutos.
+    <br><br>Ambos conectam com <strong>Previsivelmente Irracional</strong> (Dan Ariely), onde você tem 129 grifos — o triângulo está completo na sua estante.
+  </div>
+
+  <div class="cross-block">
+    <div class="cross-block-title">Insight cruzado · Dupla 03 — Filosofia &amp; Cognição</div>
+    Dobelli cataloga 99 erros cognitivos — efeito halo, caminhos alternativos invisíveis, risco nunca diretamente identificável. Sêneca antecipou isso 2.000 anos antes com uma solução diferente: em vez de corrigir o pensamento passo a passo, treinar o caráter para que os erros importem menos. A cognição estoica não é livre de vieses — é robusta o suficiente para não quebrar por causa deles.
+    <br><br>Os dois dialogam com Thinking in Bets: Duke reformula, Dobelli classifica, Sêneca aceita — três respostas distintas ao mesmo problema.
+  </div>
+
+  <div class="cross-block">
+    <div class="cross-block-title">Insight cruzado · Dupla 06 — Performance &amp; Tênis</div>
+    Gervais: <em>"o fracasso é um sentimento muito antes de se tornar um resultado"</em>. Agassi: <em>"o que você sente não importa; o que o torna valente é o que você faz"</em>. Os dois dizem a mesma coisa de ângulos opostos — Gervais pelo framework, Agassi pela autobiografia. Agassi jogou décadas sem o mapa; Gervais entrega o mapa antes do jogo começar.
+  </div>
+
+  <div class="cross-block">
+    <div class="cross-block-title">Insight cruzado · Dupla 07 — Carreira &amp; Identidade</div>
+    Seus 41 grifos de Epstein: <em>"nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta"</em>. Rand vai na direção oposta — o criador radical que recusa qualquer analogia. A síntese: relacional na coleta de inputs, intransigente na síntese final.
+    <br><br>Conecta com <strong>Maestria</strong> de Greene (47 grifos seus) — o mestrado tardio na intersecção exata de Epstein e Rand.
+  </div>
+
+  <div class="cross-block">
+    <div class="cross-block-title">Insight cruzado · Finale — Leonardo da Vinci</div>
+    Leonardo fecha o roteiro porque é o argumento vivo de Epstein — o generalista supremo — e ao mesmo tempo a antítese de Rand: não terminou quase nada, e ainda assim é o maior. Há um nó: Leonardo é 15 grifos seus. Thinking in Bets é 99. Excelência Interior é 80. A profundidade com que você leu cada livro já é um dado — o roteiro reflete seus interesses reais, não só os declarados.
+  </div>
+
+  <div class="insights-sub-label">Por livro · Insights selecionados</div>
+
+  <div class="insight-block">
+    <div class="insight-book-title">Thinking in Bets</div>
+    <div class="insight-book-meta">Annie Duke · 99 grifos seus</div>
+    <ul class="insight-list">
+      <li>O que caracteriza uma ótima decisão não é um ótimo resultado. Uma ótima decisão é consequência de um bom processo.</li>
+      <li>A vida é mais como o pôquer do que como o xadrez: você pode tomar a decisão mais ponderada e ainda assim se dar mal.</li>
+      <li>"Todo processo de 10-10-10: quais são as consequências de cada opção em dez minutos? Em dez meses? Em dez anos?"</li>
+      <li>Pré-mortem: incorporar a visualização negativa nos torna mais propensos a atingir nossos objetivos do que a positiva.</li>
+      <li>Quanto melhor você é com os números, melhor você fica em "distorcer" esses números para confirmar suas crenças.</li>
+    </ul>
+  </div>
+
+  <div class="insight-block">
+    <div class="insight-book-title">Armas da Persuasão 2.0</div>
+    <div class="insight-book-meta">Robert Cialdini · 26 grifos seus</div>
+    <ul class="insight-list">
+      <li>As pessoas simplesmente gostam de ter motivos para o que fazem — mesmo que esses motivos não sejam os reais.</li>
+      <li>Princípio do contraste: venda o terno primeiro. A referência muda tudo que vem depois.</li>
+      <li>A regra da reciprocidade cria obrigação que funciona mesmo quando a dívida foi imposta, não escolhida.</li>
+      <li>Amostras grátis são presentes — e presentes acionam a lei da reciprocidade, transformando generosidade em jiu-jitsu comercial.</li>
+    </ul>
+  </div>
+
+  <div class="insight-block">
+    <div class="insight-book-title">Arte de Pensar Claramente</div>
+    <div class="insight-book-meta">Rolf Dobelli · 9 grifos seus</div>
+    <ul class="insight-list">
+      <li>Efeito halo: jornalistas deixaram-se ofuscar pela cotação das ações e passaram a ver brilho em tudo na empresa.</li>
+      <li>Caminhos alternativos são invisíveis. O risco nunca é diretamente identificável.</li>
+      <li>"Existem dois tipos de pessoas que preveem o futuro: aquelas que nada sabem e aquelas que não sabem que nada sabem."</li>
+      <li>O pensamento intuitivo tem um fraco por histórias plausíveis. Quanto mais convincente a narrativa, mais difícil de questionar.</li>
+    </ul>
+  </div>
+
+  <div class="insight-block">
+    <div class="insight-book-title">Open</div>
+    <div class="insight-book-meta">Andre Agassi · 4 grifos seus</div>
+    <ul class="insight-list">
+      <li>"A vida vai atirar todo tipo de coisas no seu caminho, menos uma pia de cozinha. Mas aí atira a pia de cozinha."</li>
+      <li>O que você sente não importa no final das contas; o que o torna valente é o que você faz.</li>
+      <li>Saber como seu nervosismo se manifesta é o primeiro passo para tirar o melhor proveito possível da situação.</li>
+    </ul>
+  </div>
+
+  <div class="insight-block">
+    <div class="insight-book-title">Excelência Interior</div>
+    <div class="insight-book-meta">Michael Gervais · 80 grifos seus</div>
+    <ul class="insight-list">
+      <li>"Aquilo que captura sua atenção captura você." O foco direciona pensamentos, que se tornam sentimentos e ações.</li>
+      <li>O fracasso é um sentimento muito antes de se tornar um resultado.</li>
+      <li>A pressão é a recompensa oferecida àqueles que buscam a excelência.</li>
+      <li>A maestria é a busca interminável por consciência de si — vitórias e conquistas são apenas consequências.</li>
+    </ul>
+  </div>
+
+  <div class="insight-block">
+    <div class="insight-book-title">Por que Generalistas Vencem</div>
+    <div class="insight-book-meta">David Epstein · 41 grifos seus</div>
+    <ul class="insight-list">
+      <li>Especialistas altamente credenciados podem ficar piores quanto mais experiência possuem — mais confiantes e mais errados.</li>
+      <li>O mundo não é golfe. Boa parte é "tênis marciano": dá para ver os jogadores com bolas e raquetes, mas ninguém contou quais são as regras.</li>
+      <li>Quanto maior o quadro, mais singular é a contribuição humana. Nossa maior força é a integração ampla.</li>
+      <li>"Nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta."</li>
+    </ul>
+  </div>
+
+  <div class="insight-block">
+    <div class="insight-book-title">Leonardo da Vinci</div>
+    <div class="insight-book-meta">Walter Isaacson · 15 grifos seus</div>
+    <ul class="insight-list">
+      <li>A habilidade de conectar disciplinas — artes e ciências, humanidades e tecnologia — é a chave para a inovação e genialidade.</li>
+      <li>"Aquele que pode ir à nascente de um rio não vai a um jarro de água."</li>
+      <li>O gênio dentro de Leonardo era humano; tinha sido forjado por vontade e ambição próprias.</li>
+      <li>Seu método era baseado na experimentação, curiosidade e na habilidade de se admirar com fenômenos que o restante de nós ignora.</li>
+    </ul>
+  </div>
+
+  <div class="export-wrap">
+    <div class="export-title">Publicar no GitHub Pages</div>
+    <div class="export-desc">Baixe o arquivo e publique em 3 passos. O roteiro fica online, acessível pelo celular, sem custo.</div>
+    <div class="export-steps">
+      1. Clique em <strong>Baixar index.html</strong><br>
+      2. Crie um repositório no GitHub (ex: <code>roteiro-leituras</code>)<br>
+      3. Faça upload do arquivo como <code>index.html</code><br>
+      4. Vá em Settings → Pages → Branch: main → Save<br>
+      5. Acesse em: <code>https://seu-usuario.github.io/roteiro-leituras</code>
+    </div>
+    <button class="btn-export" id="btnExport">⬇ Baixar index.html</button>
+  </div>
+
+</div><!-- /tab-insights -->
+
+<!-- =================== GRIFOS TAB =================== -->
+<div id="tab-grifos" class="tab-panel">
+
+  <div class="grifo-book">
+    <div class="grifo-book-header">
+      <span class="grifo-book-name">Thinking in Bets</span>
+      <span class="grifo-count">Annie Duke · 99 grifos no Kindle</span>
+    </div>
+    <div class="grifo-item">Para começar, nossos cérebros evoluíram para criar certeza e ordem. Ficamos incomodados com a ideia de que a sorte desempenha um papel nada desprezível em nossas vidas.</div>
+    <div class="grifo-item">O que caracteriza uma ótima decisão não é um ótimo resultado. Uma ótima decisão é consequência de um bom processo.</div>
+    <div class="grifo-item">A vida, porém, é mais como o pôquer. Você poderia tomar a decisão mais inteligente e ponderada e ainda assim se dar muito mal.</div>
+    <div class="grifo-item">Em última análise, parte da habilidade na vida deve-se a aprender a calibrar melhor as crenças, usando experiência e informações para atualizá-las com mais objetividade a fim de que as apostas se tornem melhores com o tempo.</div>
+    <div class="grifo-item">Acontece que, quanto melhor você é com os números, melhor você fica em "distorcer" esses números para que confirmem suas crenças.</div>
+    <div class="grifo-item">Incorporar a incerteza na maneira como pensamos sobre nossas crenças traz muitos benefícios. Ao expressar nosso nível de confiança naquilo em que acreditamos, mudamos nosso modo de ver o mundo.</div>
+    <div class="grifo-item">A maneira como encaramos os resultados é previsivelmente padronizada: o crédito pelas coisas boas é nosso, e o das coisas ruins, obra da sorte.</div>
+    <div class="grifo-item">"Todo processo de 10-10-10 começa com uma pergunta… Quais são as consequências de cada uma das minhas opções em dez minutos? Em dez meses? Em dez anos?"</div>
+    <div class="grifo-item">Ao recrutar o eu do passado e o eu do futuro dessa forma, ativamos as vias neurais que envolvem o córtex pré-frontal, inibindo a mente emocional e mantendo sobre os eventos uma perspectiva mais racional.</div>
+    <div class="grifo-item">Pré-mortem é uma implementação do ceticismo organizado, mudando as regras do jogo para abrir espaço para a dissidência e os resultados negativos prováveis.</div>
+    <div class="grifo-item">Apesar da sabedoria popular de que alcançamos o sucesso por meio da visualização positiva, descobrimos que incorporar a visualização negativa nos torna mais propensos a atingir nossos objetivos.</div>
+    <div class="grifo-item">Os benefícios de reconhecer oportunidades extras de aprendizado vão aumentando com o tempo. Tal como juros compostos, o efeito cumulativo de ser um pouco melhor na tomada de decisões pode ser enorme.</div>
+  </div>
+
+  <div class="grifo-book">
+    <div class="grifo-book-header">
+      <span class="grifo-book-name">Armas da Persuasão 2.0</span>
+      <span class="grifo-count">Robert Cialdini · 26 grifos no Kindle</span>
+    </div>
+    <div class="grifo-item">Os clientes estavam usando um princípio simplificador — um estereótipo — para guiar suas compras: caro = bom.</div>
+    <div class="grifo-item">As pessoas simplesmente gostam de ter motivos para o que fazem.</div>
+    <div class="grifo-item">Existe um princípio na percepção humana — o princípio do contraste — que afeta o modo como vemos a diferença entre duas coisas apresentadas uma após a outra.</div>
+    <div class="grifo-item">A regra diz que devemos tentar retribuir o que outra pessoa nos forneceu. Nossas origens evoluíram num sistema de troca honrada de obrigações.</div>
+    <div class="grifo-item">A beleza da amostra grátis é que também é um presente e, como tal, pode acionar a lei da reciprocidade — em verdadeiro estilo jiu-jitsu.</div>
+    <div class="grifo-item">Suponhamos que você queira que eu concorde com determinado pedido. Uma maneira é primeiro me fazer um pedido maior, que eu provavelmente vá recusar. Então, depois que eu recusar, o pedido real.</div>
+    <div class="grifo-item">Lembre-se, também, que relacionamentos recíprocos dão uma vantagem extraordinária às culturas que os promovem.</div>
+    <div class="grifo-item">A maioria de nós acha extremamente desagradável dever favores. Isso tem um peso grande sobre nós que queremos nos livrar.</div>
+  </div>
+
+  <div class="grifo-book">
+    <div class="grifo-book-header">
+      <span class="grifo-book-name">A Arte de Pensar Claramente</span>
+      <span class="grifo-count">Rolf Dobelli · 9 grifos no Kindle</span>
+    </div>
+    <div class="grifo-item">Efeito halo: os jornalistas deixaram-se ofuscar pela cotação das ações e passaram a ver brilho com especial intensidade em tudo na empresa.</div>
+    <div class="grifo-item">Um grande número de estudos comprovou que consideramos pessoas bonitas automaticamente mais simpáticas, mais honestas e mais inteligentes. Nada disso tem correlação demonstrada.</div>
+    <div class="grifo-item">Caminhos alternativos são invisíveis, por isso raramente pensamos neles.</div>
+    <div class="grifo-item">Moral da história: o risco nunca é diretamente identificável.</div>
+    <div class="grifo-item">"Existem dois tipos de pessoas que preveem o futuro: aquelas que nada sabem e aquelas que não sabem que nada sabem."</div>
+    <div class="grifo-item">Por que caímos na falácia da conjunção? Porque temos uma compreensão intuitiva para histórias "consistentes". Quanto mais convincente a descrição, mais difícil de questionar.</div>
+    <div class="grifo-item">O pensamento intuitivo tem um fraco por histórias plausíveis. Quanto mais plausível a narrativa, menos questionamos os dados que a sustentam.</div>
+  </div>
+
+  <div class="grifo-book">
+    <div class="grifo-book-header">
+      <span class="grifo-book-name">Open — Uma Autobiografia</span>
+      <span class="grifo-count">Andre Agassi &amp; J.R. Moehringer · 4 grifos no Kindle</span>
+    </div>
+    <div class="grifo-item">A vida vai atirar todo tipo de coisas no seu caminho, menos uma pia de cozinha. Mas aí atira a pia de cozinha. Cabe a você escapar dos obstáculos.</div>
+    <div class="grifo-item">O que você sente não importa no final das contas; o que o torna valente é o que você faz.</div>
+    <div class="grifo-item">Saber como seu nervosismo se manifesta, o que ele revela sobre sua cabeça e seu corpo, é o primeiro passo para tirar o melhor proveito possível da situação.</div>
+    <div class="grifo-item">A sacola de tênis é quase como o coração — a gente precisa saber exatamente o que há lá dentro, o tempo todo.</div>
+  </div>
+
+  <div class="grifo-book">
+    <div class="grifo-book-header">
+      <span class="grifo-book-name">Excelência Interior</span>
+      <span class="grifo-count">Michael Gervais · 80 grifos no Kindle</span>
+    </div>
+    <div class="grifo-item">"Aquilo que captura sua atenção captura você." Nosso foco direciona o caminho que nossos pensamentos vão percorrer, e esses pensamentos se tornam sentimentos, ações e resultados.</div>
+    <div class="grifo-item">Há apenas uma forma de mudar radicalmente de comportamento: mudar radicalmente seu ambiente.</div>
+    <div class="grifo-item">O fracasso é um sentimento muito antes de se tornar um resultado.</div>
+    <div class="grifo-item">Estar completamente presente é ter uma mente que não está pensando no passado nem no futuro.</div>
+    <div class="grifo-item">A pressão é a recompensa oferecida àqueles que buscam a excelência.</div>
+    <div class="grifo-item">A maestria é a busca interminável por consciência de si, disciplina e crescimento pessoal — vitórias e conquistas são apenas consequências.</div>
+    <div class="grifo-item">"O mestre fracassou mais vezes do que o iniciante sequer tentou." A busca pela maestria, não pelo placar, é a maneira mais eficaz de chegar ao topo.</div>
+    <div class="grifo-item">Ironicamente, abrir mão do controle é o segredo para retomar o controle.</div>
+    <div class="grifo-item">A ansiedade é fruto de uma mente com pensamentos em excesso, gerados por preocupações em excesso.</div>
+    <div class="grifo-item">Um propósito claro e significativo nos permite estar mais presentes, porque nos tornamos menos apegados ao resultado.</div>
+  </div>
+
+  <div class="grifo-book">
+    <div class="grifo-book-header">
+      <span class="grifo-book-name">Por que Generalistas Vencem</span>
+      <span class="grifo-count">David Epstein · 41 grifos no Kindle</span>
+    </div>
+    <div class="grifo-item">Especialistas altamente credenciados podem ter a mente tão estreita que ficam piores quanto mais experiência possuem, mesmo quando mais confiantes — uma combinação perigosa.</div>
+    <div class="grifo-item">O desafio que todos enfrentamos é como manter os benefícios da amplitude, da experiência diversificada, do pensamento interdisciplinar em um mundo que cada vez mais incentiva o oposto.</div>
+    <div class="grifo-item">O mundo não é golfe. Boa parte nem é tênis. Boa parte é "tênis marciano": dá para ver os jogadores com bolas e raquetes, mas ninguém contou quais são as regras.</div>
+    <div class="grifo-item">Quanto maior o quadro, mais singular é a potencial contribuição humana. Nossa maior força é exatamente o oposto da especialização estrita: a capacidade de fazer uma integração ampla.</div>
+    <div class="grifo-item">A amplitude do treinamento é um prognóstico da amplitude da transferência. Quanto mais contexto existe em algo que é aprendido, mais o aluno cria modelos abstratos.</div>
+    <div class="grifo-item">"Nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta. Relações são muito difíceis para outras espécies."</div>
+    <div class="grifo-item">Os mestres da improvisação aprendem como bebês: mergulham, imitam e improvisam primeiro; aprendem as regras formais depois.</div>
+    <div class="grifo-item">O período de experimentação não é um detalhe para o desenvolvimento de grandes atletas — é parte central dele.</div>
+  </div>
+
+  <div class="grifo-book">
+    <div class="grifo-book-header">
+      <span class="grifo-book-name">Leonardo da Vinci</span>
+      <span class="grifo-count">Walter Isaacson · 15 grifos no Kindle</span>
+    </div>
+    <div class="grifo-item">A habilidade de conectar disciplinas — artes e ciências, humanidades e tecnologia — é a chave para a inovação, imaginação e genialidade.</div>
+    <div class="grifo-item">"Aquele que pode ir à nascente de um rio não vai a um jarro de água."</div>
+    <div class="grifo-item">O gênio dentro de Leonardo era humano; tinha sido forjado por vontade e ambição próprias. Sua genialidade não vinha de ser um recipiente divino — era construída.</div>
+    <div class="grifo-item">Ele tinha uma imaginação tão fértil que chegava a flertar com os limites da fantasia — algo que também podemos tentar preservar em nós mesmos.</div>
+    <div class="grifo-item">Aprendi com Leonardo que um desejo constante de se surpreender com o mundo cotidiano tem o poder de deixar cada momento de nossa vida muito mais rico.</div>
+    <div class="grifo-item">Seu método era baseado na experimentação, na curiosidade e na habilidade de se admirar com fenômenos nos quais o restante de nós dificilmente presta atenção após a infância.</div>
+    <div class="grifo-item">Sua postura a favor do livre pensar foi o que o salvou de ser apenas mais um seguidor do pensamento tradicional.</div>
+  </div>
+
+</div><!-- /tab-grifos -->
+
+
+
+<footer>
+  Inspirado no formato de leitura de <a href="https://danwang.co/books/">Dan Wang</a>. Progresso salvo automaticamente no navegador.
+</footer>
+
+</div><!-- .page -->
+
+<script>
+// ─── ALL GRIFOS for daily selection ────────────────────────
+const ALL_GRIFOS = [
+  { text: "O que caracteriza uma ótima decisão não é um ótimo resultado. Uma ótima decisão é consequência de um bom processo.", book: "Thinking in Bets" },
+  { text: "A vida é mais como o pôquer. Você poderia tomar a decisão mais inteligente e ponderada e ainda assim se dar muito mal.", book: "Thinking in Bets" },
+  { text: "Quanto melhor você é com os números, melhor você fica em distorcer esses números para confirmar suas crenças.", book: "Thinking in Bets" },
+  { text: "Incorporar a incerteza na maneira como pensamos sobre nossas crenças traz muitos benefícios. Ao expressar nosso nível de confiança naquilo em que acreditamos, mudamos nosso modo de ver o mundo.", book: "Thinking in Bets" },
+  { text: "Apesar da sabedoria popular, incorporar a visualização negativa nos torna mais propensos a atingir nossos objetivos do que a visualização positiva.", book: "Thinking in Bets" },
+  { text: "Como juros compostos, o efeito cumulativo de ser um pouco melhor na tomada de decisões pode ser enorme.", book: "Thinking in Bets" },
+  { text: "As pessoas simplesmente gostam de ter motivos para o que fazem — mesmo que esses motivos não sejam os reais.", book: "Armas da Persuasão 2.0" },
+  { text: "O princípio do contraste afeta o modo como vemos a diferença entre duas coisas apresentadas uma após a outra. Venda o terno primeiro.", book: "Armas da Persuasão 2.0" },
+  { text: "A beleza da amostra grátis é que também é um presente — e presentes acionam a lei da reciprocidade, em verdadeiro estilo jiu-jitsu.", book: "Armas da Persuasão 2.0" },
+  { text: "A maioria de nós acha extremamente desagradável dever favores. Esse peso é justamente o que o princípio da reciprocidade explora.", book: "Armas da Persuasão 2.0" },
+  { text: "Caminhos alternativos são invisíveis, por isso raramente pensamos neles. O risco nunca é diretamente identificável.", book: "Arte de Pensar Claramente" },
+  { text: "Existem dois tipos de pessoas que preveem o futuro: aquelas que nada sabem e aquelas que não sabem que nada sabem.", book: "Arte de Pensar Claramente" },
+  { text: "O pensamento intuitivo tem um fraco por histórias plausíveis. Quanto mais convincente a narrativa, mais difícil de questionar — mesmo quando é falsa.", book: "Arte de Pensar Claramente" },
+  { text: "O que você sente não importa no final das contas; o que o torna valente é o que você faz.", book: "Open — Agassi" },
+  { text: "A vida vai atirar todo tipo de coisas no seu caminho, menos uma pia de cozinha. Mas aí atira a pia de cozinha. Cabe a você escapar dos obstáculos.", book: "Open — Agassi" },
+  { text: "A sacola de tênis é quase como o coração — a gente precisa saber exatamente o que há lá dentro, o tempo todo.", book: "Open — Agassi" },
+  { text: "Aquilo que captura sua atenção captura você. Nosso foco direciona o caminho dos pensamentos, e esses pensamentos se tornam sentimentos, ações e resultados.", book: "Excelência Interior" },
+  { text: "O fracasso é um sentimento muito antes de se tornar um resultado.", book: "Excelência Interior" },
+  { text: "Há apenas uma forma de mudar radicalmente de comportamento: mudar radicalmente seu ambiente.", book: "Excelência Interior" },
+  { text: "Ironicamente, abrir mão do controle é o segredo para retomar o controle.", book: "Excelência Interior" },
+  { text: "A pressão é a recompensa oferecida àqueles que buscam a excelência.", book: "Excelência Interior" },
+  { text: "O mestre fracassou mais vezes do que o iniciante sequer tentou. A busca pela maestria, não pelo placar, é o caminho.", book: "Excelência Interior" },
+  { text: "Um propósito claro e significativo nos permite estar mais presentes, porque nos tornamos menos apegados ao resultado.", book: "Excelência Interior" },
+  { text: "Especialistas altamente credenciados podem ter a mente tão estreita que ficam piores quanto mais experiência possuem — mais confiantes e mais errados. Uma combinação perigosa.", book: "Por que Generalistas Vencem" },
+  { text: "O mundo não é golfe. Boa parte é tênis marciano: dá para ver os jogadores com bolas e raquetes, mas ninguém contou quais são as regras.", book: "Por que Generalistas Vencem" },
+  { text: "Quanto maior o quadro, mais singular é a potencial contribuição humana. Nossa maior força é exatamente o oposto da especialização estrita: a integração ampla.", book: "Por que Generalistas Vencem" },
+  { text: "Nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta. Relações são muito difíceis para outras espécies.", book: "Por que Generalistas Vencem" },
+  { text: "A amplitude do treinamento é prognóstico da amplitude da transferência. Mais contexto gera modelos mais abstratos e transferíveis.", book: "Por que Generalistas Vencem" },
+  { text: "A habilidade de conectar disciplinas — artes e ciências, humanidades e tecnologia — é a chave para a inovação, imaginação e genialidade.", book: "Leonardo da Vinci" },
+  { text: "Aquele que pode ir à nascente de um rio não vai a um jarro de água.", book: "Leonardo da Vinci" },
+  { text: "O gênio dentro de Leonardo era humano; tinha sido forjado por vontade e ambição próprias. Não era um recipiente divino — era construído.", book: "Leonardo da Vinci" },
+  { text: "Um desejo constante de se surpreender com o mundo cotidiano tem o poder de deixar cada momento de nossa vida muito mais rico.", book: "Leonardo da Vinci" },
+  { text: "Seu método era baseado na experimentação, na curiosidade e na habilidade de se admirar com fenômenos nos quais o restante de nós dificilmente presta atenção após a infância.", book: "Leonardo da Vinci" },
+];
+
+function setDailyGrifo() {
+  // Rotate by day — same grifo all day, different each day
+  const today = new Date();
+  const dayIndex = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+  const grifo = ALL_GRIFOS[dayIndex % ALL_GRIFOS.length];
+  document.getElementById('dailyGrifoText').textContent = '“' + grifo.text + '”';
+  document.getElementById('dailyGrifoSource').textContent = '— ' + grifo.book;
+}
+
+// ─── TABS ──────────────────────────────────────────────────
+function initTabs() {
+  const btns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+}
+
+// ─── GITHUB EXPORT ─────────────────────────────────────────
+function initExport() {
+  const btn = document.getElementById('btnExport');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const content = document.documentElement.outerHTML;
+    const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'index.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+
+<script>
+const PAIRS = [
+  { num:'01', books:['thinking-bets','armas'], a:'Thinking in Bets', b:'Armas da Persuasão 2.0', tema:'Decisão & Influência' },
+  { num:'02', books:['dopamina','conforto'],   a:'Nação Dopamina',    b:'A Crise do Conforto',   tema:'Corpo & Disciplina' },
+  { num:'03', books:['seneca','pensar'],        a:'Café com Sêneca',   b:'Arte de Pensar Claramente', tema:'Filosofia & Cognição' },
+  { num:'04', books:['partes','felicidade'],    a:'Não Há Partes Ruins',b:'Felicidade Por Acaso', tema:'Psicologia Interior' },
+  { num:'05', books:['jobs','musk'],            a:'Steve Jobs',         b:'Elon Musk',             tema:'Dois Construtores' },
+  { num:'06', books:['agassi','excelencia'],    a:'Open (Agassi)',      b:'Excelência Interior',   tema:'Performance & Tênis' },
+  { num:'07', books:['generalistas','nascente'],a:'Generalistas Vencem…',b:'Nascente',             tema:'Carreira & Identidade' },
+  { num:'★',  books:['leonardo'],               a:'Leonardo da Vinci',  b:'(solo)',                tema:'Síntese' },
+];
+
+const PAIR_ELS = ['pair-1','pair-2','pair-3','pair-4','pair-5','pair-6','pair-7','pair-solo'];
+const TOTAL = 15;
+const KEY = 'roteiro_leitura_v2';
+let state = {};
+
+function load() {
+  try { const s = localStorage.getItem(KEY); if(s) state = JSON.parse(s); } catch(e){}
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+}
+
+function applyBook(bookId, isRead) {
+  const btn = document.querySelector(`[data-book="${bookId}"]`);
+  const hl  = document.getElementById('hl-' + bookId);
+  if (btn) {
+    if (isRead) { btn.classList.add('is-read'); btn.innerHTML = '<span>✓</span> lido'; }
+    else        { btn.classList.remove('is-read'); btn.innerHTML = '<span>○</span> marcar lido'; }
+  }
+  if (hl) {
+    if (isRead) hl.classList.add('visible'); else hl.classList.remove('visible');
+  }
+}
+
+function updatePairs() {
+  PAIRS.forEach((p, i) => {
+    const el = document.getElementById(PAIR_ELS[i]);
+    if (!el) return;
+    const allRead = p.books.every(b => state[b]);
+    if (allRead) el.classList.add('all-read'); else el.classList.remove('all-read');
+  });
+}
+
+function updateProgress() {
+  const allBooks = PAIRS.flatMap(p => p.books);
+  const readCount = allBooks.filter(b => state[b]).length;
+  const pct = Math.round((readCount / TOTAL) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = readCount + ' de ' + TOTAL + ' lidos';
+}
+
+function renderTable() {
+  const tbody = document.getElementById('summaryTable');
+  tbody.innerHTML = '';
+  PAIRS.forEach(p => {
+    const dots = p.books.map(b =>
+      `<span class="status-dot ${state[b] ? 'read' : ''}"></span>`
+    ).join(' ');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--accent);font-family:'Playfair Display',serif;padding:.55rem 0">${p.num}</td>
+      <td style="padding:.55rem .6rem">${p.a}</td>
+      <td style="padding:.55rem .6rem">${p.b}</td>
+      <td style="padding:.55rem .6rem;color:var(--faded);font-style:italic;font-size:.83rem">${p.tema}</td>
+      <td style="text-align:center;padding:.55rem .3rem">${dots}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function fullRender() {
+  PAIRS.flatMap(p => p.books).forEach(b => applyBook(b, !!state[b]));
+  updatePairs();
+  updateProgress();
+  renderTable();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  load();
+  fullRender();
+  setDailyGrifo();
+  initTabs();
+  initExport();
+
+  document.querySelectorAll('.read-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const bookId = btn.dataset.book;
+      state[bookId] = !state[bookId];
+      save();
+      applyBook(bookId, state[bookId]);
+      updatePairs();
+      updateProgress();
+      renderTable();
+    });
+  });
+});
+</script>
+</body>
+</html>
