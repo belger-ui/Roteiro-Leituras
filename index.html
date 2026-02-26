@@ -1,1492 +1,696 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROTEIRO_LEITURAS.exe</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-:root{
-  --bg:      #07070f;
-  --surface: #0d0d1a;
-  --surface2:#12122a;
-  --border:  #1e1e3f;
-  --neon:    #00ff88;
-  --cyan:    #00e5ff;
-  --pink:    #ff2d78;
-  --gold:    #ffd700;
-  --dim:     #3a3a6a;
-  --text:    #c8c8e8;
-  --text2:   #7070a0;
-  --font-mono:'Share Tech Mono',monospace;
-  --font-head:'Orbitron',sans-serif;
-  --font-body:'Rajdhani',sans-serif;
-}
-
-html{scroll-behavior:smooth}
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--font-body);
-  font-size:17px;
-  line-height:1.7;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-/* scanlines overlay */
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);
-  pointer-events:none;z-index:9999;
-}
-
-/* grid bg */
-body::after{
-  content:'';
-  position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(0,255,136,.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,255,136,.03) 1px,transparent 1px);
-  background-size:40px 40px;
-  pointer-events:none;z-index:0;
-}
-
-.page{
-  max-width:740px;
-  margin:0 auto;
-  padding:2rem 1.5rem 8rem;
-  position:relative;z-index:1;
-}
-
-/* ─── HEADER ─── */
-header{
-  border-bottom:1px solid var(--border);
-  padding-bottom:2rem;
-  margin-bottom:0;
-}
-
-.sys-label{
-  font-family:var(--font-mono);
-  font-size:.65rem;
-  color:var(--neon);
-  letter-spacing:.2em;
-  margin-bottom:1.2rem;
-  display:flex;align-items:center;gap:.6rem;
-}
-.sys-label::before{content:'▶';animation:blink 1.2s step-end infinite}
-@keyframes blink{50%{opacity:0}}
-
-h1{
-  font-family:var(--font-head);
-  font-size:clamp(1.4rem,4vw,2.2rem);
-  font-weight:900;
-  color:#fff;
-  line-height:1.1;
-  margin-bottom:.4rem;
-  text-shadow:0 0 30px rgba(0,255,136,.4),0 0 60px rgba(0,229,255,.2);
-  letter-spacing:.05em;
-}
-h1 span{color:var(--neon);}
-
-.subtitle{
-  font-family:var(--font-mono);
-  font-size:.75rem;
-  color:var(--text2);
-  letter-spacing:.08em;
-  margin-bottom:1.6rem;
-}
-
-/* progress */
-.progress-wrap{display:flex;align-items:center;gap:1rem;margin-bottom:1.4rem}
-.progress-bg{flex:1;height:3px;background:var(--border);position:relative;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--cyan));width:0%;transition:width .5s ease;box-shadow:0 0 8px var(--neon)}
-.progress-text{font-family:var(--font-mono);font-size:.65rem;color:var(--neon);white-space:nowrap;letter-spacing:.06em}
-
-/* ─── DAILY GRIFO ─── */
-.daily-block{
-  margin:1.6rem 0;
-  padding:1rem 1.2rem;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-left:3px solid var(--neon);
-  position:relative;
-  overflow:hidden;
-}
-.daily-block::after{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,var(--neon),transparent);
-}
-.daily-label{
-  font-family:var(--font-mono);
-  font-size:.6rem;
-  color:var(--neon);
-  letter-spacing:.2em;
-  margin-bottom:.5rem;
-  display:flex;align-items:center;gap:.5rem;
-}
-.pulse{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--neon);
-  box-shadow:0 0 6px var(--neon);
-  animation:pulse 2s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
-.daily-text{
-  font-family:var(--font-body);
-  font-size:.95rem;
-  color:#e0e0f0;
-  line-height:1.6;
-  font-style:italic;
-}
-.daily-source{
-  font-family:var(--font-mono);
-  font-size:.62rem;
-  color:var(--text2);
-  margin-top:.4rem;
-  letter-spacing:.06em;
-}
-
-/* ─── TABS ─── */
-.tab-nav{
-  display:flex;
-  gap:0;
-  border-bottom:1px solid var(--border);
-  margin-top:2rem;
-}
-.tab-btn{
-  font-family:var(--font-mono);
-  font-size:.68rem;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  background:none;border:none;cursor:pointer;
-  padding:.6rem 1.2rem;
-  color:var(--text2);
-  border-bottom:2px solid transparent;
-  margin-bottom:-1px;
-  transition:all .15s;
-}
-.tab-btn:hover{color:var(--cyan)}
-.tab-btn.active{color:var(--neon);border-bottom-color:var(--neon);text-shadow:0 0 12px var(--neon)}
-
-.tab-panel{display:none;padding-top:2.5rem;animation:fadeIn .2s ease}
-.tab-panel.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-/* ─── SECTION LABEL ─── */
-.sec-label{
-  font-family:var(--font-mono);
-  font-size:.6rem;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--dim);
-  display:flex;align-items:center;gap:.8rem;
-  margin-bottom:2rem;
-}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* ─── PAIR CARD ─── */
-.pair{
-  margin-bottom:2rem;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-top:2px solid var(--neon);
-  padding:1.4rem 1.6rem;
-  transition:border-color .3s;
-  position:relative;
-}
-.pair::before{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--neon),var(--cyan),transparent);
-}
-.pair.all-read{border-top-color:var(--cyan);background:rgba(0,229,255,.04)}
-.pair.all-read::before{background:linear-gradient(90deg,var(--cyan),var(--neon),transparent)}
-
-.pair-num{
-  font-family:var(--font-mono);
-  font-size:.6rem;color:var(--neon);
-  letter-spacing:.2em;
-  margin-bottom:.3rem;
-}
-.pair-theme{
-  font-family:var(--font-head);
-  font-size:.85rem;font-weight:700;
-  color:#fff;letter-spacing:.04em;
-  margin-bottom:1.2rem;
-}
-
-/* book */
-.book{
-  padding:.9rem 0;
-  border-bottom:1px solid var(--border);
-}
-.book:last-of-type{border-bottom:none;padding-bottom:0}
-
-.book-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:.3rem}
-.book-title{
-  font-family:var(--font-head);
-  font-size:.9rem;font-weight:700;
-  color:#fff;letter-spacing:.03em;
-  line-height:1.3;
-}
-.book-author{
-  font-family:var(--font-mono);
-  font-size:.65rem;color:var(--text2);
-  margin-bottom:.5rem;letter-spacing:.06em;
-}
-.book-summary{font-size:.88rem;color:var(--text);line-height:1.65}
-
-/* read btn */
-.read-btn{
-  flex-shrink:0;
-  font-family:var(--font-mono);
-  font-size:.6rem;letter-spacing:.1em;
-  text-transform:uppercase;
-  background:transparent;
-  border:1px solid var(--dim);
-  color:var(--dim);
-  padding:.25rem .7rem;
-  border-radius:0;
-  cursor:pointer;
-  transition:all .15s;
-  white-space:nowrap;
-  margin-top:.1rem;
-}
-.read-btn:hover{border-color:var(--neon);color:var(--neon);box-shadow:0 0 8px rgba(0,255,136,.2)}
-.read-btn.is-read{
-  border-color:var(--neon);color:#07070f;
-  background:var(--neon);
-  box-shadow:0 0 12px rgba(0,255,136,.4);
-}
-
-/* highlights */
-.highlights{
-  margin-top:.8rem;
-  padding:.8rem 1rem;
-  background:rgba(0,0,0,.3);
-  border-left:2px solid var(--neon);
-  display:none;
-}
-.highlights.visible{display:block;animation:fadeIn .2s ease}
-.hl-label{
-  font-family:var(--font-mono);
-  font-size:.58rem;letter-spacing:.18em;
-  text-transform:uppercase;
-  color:var(--neon);
-  margin-bottom:.6rem;
-}
-.hl-label.kindle::before{content:'◈ '}
-.highlights ul{list-style:none}
-.highlights ul li{
-  font-size:.85rem;color:var(--text);
-  font-style:italic;
-  padding:.35rem 0;
-  border-bottom:1px solid rgba(30,30,63,.8);
-  line-height:1.6;
-}
-.highlights ul li:last-child{border-bottom:none}
-.highlights ul li::before{content:'"';color:var(--neon);margin-right:.2rem}
-
-/* cross insight */
-.cross{
-  margin-top:1.2rem;
-  padding:.9rem 1.1rem;
-  background:rgba(0,229,255,.04);
-  border:1px solid rgba(0,229,255,.15);
-  border-left:2px solid var(--cyan);
-  font-size:.83rem;color:var(--text);line-height:1.65;
-}
-.cross-title{
-  font-family:var(--font-mono);
-  font-size:.58rem;letter-spacing:.16em;
-  text-transform:uppercase;
-  color:var(--cyan);margin-bottom:.4rem;
-}
-
-/* rationale */
-.rationale{
-  font-size:.83rem;color:var(--text2);
-  font-style:italic;
-  margin-top:1rem;padding-top:1rem;
-  border-top:1px solid var(--border);
-  line-height:1.6;
-}
-
-/* ─── TABLE ─── */
-.table-wrap{margin-top:3rem}
-table{width:100%;border-collapse:collapse;font-size:.83rem;font-family:var(--font-mono)}
-th{
-  text-align:left;padding:.5rem .6rem;
-  color:var(--text2);font-weight:400;
-  border-bottom:1px solid var(--border);
-  font-size:.65rem;letter-spacing:.1em;
-}
-td{padding:.45rem .6rem;border-bottom:1px solid rgba(30,30,63,.5);vertical-align:middle}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--dim);display:inline-block;transition:all .2s}
-.dot.read{background:var(--neon);box-shadow:0 0 6px var(--neon)}
-
-/* ─── ORBIT ─── */
-.orbit-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:.8rem;margin-top:1.2rem;
-}
-@media(max-width:650px){.orbit-grid{grid-template-columns:1fr}}
-.orbit-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:.9rem 1rem;
-  transition:border-color .15s;
-}
-.orbit-card:hover{border-color:var(--pink)}
-.orbit-title{
-  font-family:var(--font-head);
-  font-size:.78rem;font-weight:700;
-  color:#fff;margin-bottom:.15rem;
-  letter-spacing:.03em;
-}
-.orbit-author{
-  font-family:var(--font-mono);
-  font-size:.6rem;color:var(--text2);
-  margin-bottom:.5rem;letter-spacing:.05em;
-}
-.orbit-conn{font-size:.78rem;color:var(--text);line-height:1.5}
-.orbit-tag{
-  display:inline-block;
-  font-family:var(--font-mono);
-  font-size:.58rem;letter-spacing:.08em;
-  color:var(--pink);
-  border:1px solid rgba(255,45,120,.3);
-  padding:.08rem .35rem;margin-top:.5rem;
-}
-
-/* ─── INSIGHTS TAB ─── */
-.insight-block{margin-bottom:2.2rem;padding-bottom:2.2rem;border-bottom:1px solid var(--border)}
-.insight-block:last-child{border-bottom:none}
-.insight-book{
-  font-family:var(--font-head);
-  font-size:.95rem;font-weight:700;
-  color:#fff;margin-bottom:.1rem;
-  letter-spacing:.04em;
-}
-.insight-meta{
-  font-family:var(--font-mono);
-  font-size:.62rem;color:var(--neon);
-  letter-spacing:.08em;margin-bottom:.8rem;
-}
-.insight-list{list-style:none}
-.insight-list li{
-  font-size:.87rem;color:var(--text);font-style:italic;
-  padding:.4rem 0;border-bottom:1px solid rgba(30,30,63,.6);
-  line-height:1.6;
-}
-.insight-list li:last-child{border-bottom:none}
-.insight-list li::before{content:'"';color:var(--neon);margin-right:.2rem}
-
-.cross-block{
-  background:rgba(0,229,255,.04);
-  border:1px solid rgba(0,229,255,.15);
-  border-left:2px solid var(--cyan);
-  padding:.9rem 1.1rem;margin-bottom:1.2rem;
-  font-size:.85rem;color:var(--text);line-height:1.65;
-}
-.cross-block-title{
-  font-family:var(--font-mono);
-  font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--cyan);margin-bottom:.4rem;
-}
-
-/* ─── GRIFOS TAB ─── */
-.grifo-book{margin-bottom:2.5rem}
-.grifo-header{
-  display:flex;align-items:baseline;gap:.8rem;
-  margin-bottom:.8rem;padding-bottom:.5rem;
-  border-bottom:1px solid var(--border);
-}
-.grifo-name{
-  font-family:var(--font-head);
-  font-size:.9rem;font-weight:700;
-  color:#fff;letter-spacing:.03em;
-}
-.grifo-count{
-  font-family:var(--font-mono);
-  font-size:.6rem;color:var(--neon);letter-spacing:.06em;
-}
-.grifo-item{
-  padding:.55rem 0 .55rem .8rem;
-  border-left:2px solid transparent;
-  border-bottom:1px solid rgba(30,30,63,.5);
-  font-size:.87rem;font-style:italic;color:var(--text);
-  line-height:1.6;cursor:default;
-  transition:border-left-color .15s;
-}
-.grifo-item:hover{border-left-color:var(--neon)}
-.grifo-item:last-child{border-bottom:none}
-.grifo-item::before{content:'"';color:var(--neon);margin-right:.2rem}
-
-/* ─── EXPORT TAB ─── */
-.export-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:1.4rem 1.6rem;
-  margin-bottom:1.2rem;
-}
-.export-card-title{
-  font-family:var(--font-head);
-  font-size:.85rem;font-weight:700;
-  color:#fff;letter-spacing:.04em;
-  margin-bottom:.8rem;
-}
-.steps{
-  font-family:var(--font-mono);
-  font-size:.75rem;color:var(--text);
-  line-height:2;
-}
-.steps code{
-  background:rgba(0,255,136,.08);
-  color:var(--neon);
-  padding:.05rem .4rem;
-  font-size:.7rem;border-radius:2px;
-}
-.steps a{color:var(--cyan);text-decoration:none}
-.steps a:hover{text-decoration:underline}
-.export-btns{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem;align-items:center}
-.btn{
-  font-family:var(--font-mono);
-  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
-  border:1px solid var(--neon);
-  background:transparent;color:var(--neon);
-  padding:.45rem 1.1rem;cursor:pointer;
-  transition:all .15s;
-}
-.btn:hover{background:var(--neon);color:#07070f;box-shadow:0 0 16px rgba(0,255,136,.5)}
-.btn.secondary{border-color:var(--cyan);color:var(--cyan)}
-.btn.secondary:hover{background:var(--cyan);color:#07070f;box-shadow:0 0 16px rgba(0,229,255,.4)}
-.copy-ok{font-family:var(--font-mono);font-size:.65rem;color:var(--neon);display:none;letter-spacing:.1em}
-
-.gh-link-gen{margin-top:1rem}
-.gh-link-gen input{
-  font-family:var(--font-mono);
-  font-size:.72rem;
-  background:rgba(0,0,0,.4);
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:.35rem .7rem;
-  width:160px;
-  outline:none;
-}
-.gh-link-gen input:focus{border-color:var(--neon)}
-.gh-link-gen button{
-  font-family:var(--font-mono);font-size:.65rem;letter-spacing:.08em;
-  border:1px solid var(--dim);background:transparent;color:var(--text2);
-  padding:.35rem .7rem;cursor:pointer;
-  transition:all .15s;margin-left:.4rem;
-}
-.gh-link-gen button:hover{border-color:var(--neon);color:var(--neon)}
-#ghResult{
-  font-family:var(--font-mono);font-size:.7rem;color:var(--cyan);
-  margin-top:.5rem;letter-spacing:.04em;
-}
-#ghResult a{color:var(--cyan)}
-
-/* footer */
-footer{
-  margin-top:4rem;border-top:1px solid var(--border);
-  padding-top:1.5rem;
-  font-family:var(--font-mono);font-size:.6rem;
-  color:var(--dim);letter-spacing:.08em;
-}
-footer a{color:var(--dim)}
-
-@media(max-width:480px){
-  h1{font-size:1.4rem}
-  .pair{padding:1rem 1.1rem}
-  .book-top{flex-direction:column}
-  .tab-btn{padding:.5rem .7rem;font-size:.6rem}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise de Investimentos - Guga</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow-x: hidden; font-family: 'Inter', sans-serif; }
+    input:focus, select:focus { 
+      border-color: #00d4ff !important; 
+      box-shadow: 0 0 0 1px #00d4ff, 0 0 40px rgba(0,212,255,0.2) !important; 
+      outline: none;
+    }
+    button:not(:disabled):hover { 
+      transform: translateY(-2px); 
+      filter: brightness(1.1); 
+    }
+    button:not(:disabled):active { 
+      transform: translateY(0); 
+    }
+  </style>
 </head>
 <body>
-<div class="page">
-
-<!-- HEADER -->
-<header>
-  <div class="sys-label">ROTEIRO_LEITURAS.exe · v3.0 · LOADED</div>
-  <h1>QUINZE<span>_</span>LIVROS<br>SETE<span>_</span>DUPLAS</h1>
-  <p class="subtitle">// sequência para quem pensa em sistemas, riscos e performance</p>
-  <div class="progress-wrap">
-    <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-text" id="progressText">0/15</div>
-  </div>
-
-  <!-- DAILY GRIFO -->
-  <div class="daily-block">
-    <div class="daily-label"><span class="pulse"></span>GRIFO_DO_DIA.log</div>
-    <div class="daily-text" id="dailyText">carregando...</div>
-    <div class="daily-source" id="dailySource"></div>
-  </div>
-</header>
-
-<!-- TABS -->
-<nav class="tab-nav">
-  <button class="tab-btn active" data-tab="roteiro">[ ROTEIRO ]</button>
-  <button class="tab-btn" data-tab="insights">[ INSIGHTS ]</button>
-  <button class="tab-btn" data-tab="grifos">[ GRIFOS ]</button>
-  <button class="tab-btn" data-tab="export">[ DEPLOY ]</button>
-</nav>
-
-<!-- ═══════════════════════════════════════
-     TAB: ROTEIRO
-═══════════════════════════════════════ -->
-<div id="tab-roteiro" class="tab-panel active">
-
-<div class="sec-label" style="margin-top:2.5rem">DUPLAS · SEQUÊNCIA</div>
-
-<!-- DUPLA 01 -->
-<div class="pair" id="pair-1">
-  <div class="pair-num">DUPLA_01</div>
-  <div class="pair-theme">Probabilidade &amp; Influência</div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Thinking in Bets</div><div class="book-author">Annie Duke</div></div>
-      <button class="read-btn" data-book="thinking-bets"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">A ex-campeã mundial de poker separa dois conceitos que o cérebro confunde: a qualidade da decisão e a qualidade do resultado. Em ambientes de incerteza — mercados de crédito, apostas esportivas — uma decisão excelente pode produzir um resultado ruim. Duke chama isso de <em>resulting</em> e propõe transformar cada decisão em uma aposta explícita para forçar honestidade intelectual.</div>
-    <div class="highlights" id="hl-thinking-bets">
-      <div class="hl-label kindle">KINDLE_HIGHLIGHTS</div>
-      <ul>
-        <li>O que caracteriza uma ótima decisão não é um ótimo resultado. Uma ótima decisão é consequência de um bom processo.</li>
-        <li>A vida é mais como o pôquer. Você poderia tomar a decisão mais ponderada e ainda assim se dar muito mal.</li>
-        <li>"Todo processo de 10-10-10: quais são as consequências de cada opção em dez minutos? Em dez meses? Em dez anos?"</li>
-        <li>Pré-mortem: incorporar a visualização negativa nos torna mais propensos a atingir nossos objetivos do que a positiva.</li>
-        <li>Quanto melhor você é com os números, melhor você fica em distorcer esses números para confirmar suas crenças.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Armas da Persuasão 2.0</div><div class="book-author">Robert Cialdini</div></div>
-      <button class="read-btn" data-book="armas"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">A versão atualizada do clássico de 1984, com um sétimo princípio: a unidade — pertencimento a um grupo que vai além da simpatia. Para quem estrutura produtos de crédito ou conduz roadshows, entender os gatilhos automáticos de decisão do outro lado não é manipulação — é fluência em comunicação.</div>
-    <div class="highlights" id="hl-armas">
-      <div class="hl-label kindle">KINDLE_HIGHLIGHTS</div>
-      <ul>
-        <li>As pessoas simplesmente gostam de ter motivos para o que fazem — mesmo que esses motivos não sejam os reais.</li>
-        <li>Princípio do contraste: venda o terno primeiro, porque depois os suéteres caros não parecem tão caros. A referência muda tudo.</li>
-        <li>A regra da reciprocidade cria obrigação que funciona mesmo quando a dívida foi imposta, não escolhida.</li>
-        <li>Amostras grátis são presentes — e presentes acionam a lei da reciprocidade, transformando generosidade em jiu-jitsu comercial.</li>
-        <li>Quer que eu concorde com seu pedido? Primeiro me faça um pedido maior — que eu vá recusar. Então faça o real.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="rationale">Juntos, formam uma visão completa do processo decisório: como você decide mal (Duke) e como outros são convencidos a decidir de um jeito específico (Cialdini).</div>
-  <div class="cross">
-    <div class="cross-title">CROSS_INSIGHT · DUPLA_01</div>
-    Duke descreve o <em>resulting</em> — julgar a decisão pelo resultado. Cialdini descreve o <em>contraste</em> — o contexto muda a percepção do valor. Os dois são o mesmo fenômeno visto de ângulos opostos: a mente humana não avalia em absoluto, avalia em relação. Em mercados de crédito, isso é devastador. Conecta com <strong>Previsivelmente Irracional</strong> de Ariely — seus 129 grifos fecham o triângulo.
-  </div>
-</div>
-
-<!-- DUPLA 02 -->
-<div class="pair" id="pair-2">
-  <div class="pair-num">DUPLA_02</div>
-  <div class="pair-theme">O Corpo como Sinal</div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Nação Dopamina</div><div class="book-author">Anna Lembke</div></div>
-      <button class="read-btn" data-book="dopamina"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">A psiquiatra de Stanford explica como o sistema de prazer/dor do cérebro foi sequestrado pela superabundância moderna. O argumento central: toda adição é estruturalmente idêntica — dopamina é dopamina, seja heroína, Twitter ou açúcar. A abstinência não é punição; é recalibração do setpoint.</div>
-    <div class="highlights" id="hl-dopamina">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>Prazer e dor se processam nas mesmas regiões cerebrais e funcionam como lados opostos de uma balança.</li>
-        <li>O cérebro responde a qualquer excesso restaurando equilíbrio pelo lado oposto — a ressaca não é fraqueza, é física.</li>
-        <li>Dopamina não é sobre prazer. É sobre antecipação. A satisfação real cai a cada uso; a antecipação escala.</li>
-        <li>Fast-pacing, scrolling infinito e notificações são engenharia de dopamina. A arquitetura do produto é o vício.</li>
-        <li>Abstinência de 30 dias reseta o setpoint. O que parecia necessário começa a parecer opcional.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">A Crise do Conforto</div><div class="book-author">Michael Easter</div></div>
-      <button class="read-btn" data-book="conforto"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Easter vai para o Alasca com caçadores e volta com um argumento simples: nossa biologia foi forjada em escassez, e a abundância moderna é um bug, não um feature. O desconforto deliberado — fome, frio, exaustão física — não é masoquismo; é restaurar o sistema operacional original.</div>
-    <div class="highlights" id="hl-conforto">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>Tédio é um recurso: sem estímulos externos, o cérebro gera insight, criatividade e autoconhecimento.</li>
-        <li>Rucking (caminhar com peso) é o exercício mais evolutivamente natural. Simples, eficaz, sem tecnologia.</li>
-        <li>A ausência de desconforto embota o sistema de recompensa — a mesma física de Lembke, vista pelo lado oposto.</li>
-        <li>Caçadores-coletores modernos caminham 15km/dia. Não por disciplina — por necessidade. Remova a necessidade, destrua a biologia.</li>
-        <li>A solução não é sofrer mais. É reintroduzir estressores calibrados que o corpo foi construído para receber.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="rationale">Lembke dá o diagnóstico neurológico; Easter dá o remédio prático. Juntos formam o argumento mais convincente para manter disciplina de treino intacta.</div>
-</div>
-
-<!-- DUPLA 03 -->
-<div class="pair" id="pair-3">
-  <div class="pair-num">DUPLA_03</div>
-  <div class="pair-theme">Filosofia &amp; Cognição</div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Café com Sêneca</div><div class="book-author">Leandro Karnal</div></div>
-      <button class="read-btn" data-book="seneca"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Karnal usa as cartas de Sêneca como portal para uma filosofia prática de vida. Não é autoajuda — é arqueologia de sabedoria aplicada. Sêneca escrevia para Lucílio sobre tempo, morte, amizade e poder. A relevância para um gestor de crédito em 2026 é surpreendente.</div>
-    <div class="highlights" id="hl-seneca">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>Omnia aliena sunt, tempus tantum nostrum est. Tudo é alheio; só o tempo é realmente seu.</li>
-        <li>O maior obstáculo para a vida é a expectativa, que depende do amanhã e perde o hoje.</li>
-        <li>Não é pobreza ter pouco; é pobreza desejar mais. O setpoint hedônico de Lembke está em Sêneca, 2.000 anos antes.</li>
-        <li>A amizade verdadeira é um bem que só existe no plural — você não pode ter um amigo sem ser um.</li>
-        <li>Recede in te ipse. Recuar para dentro de si não é fuga — é estratégia.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">A Arte de Pensar Claramente</div><div class="book-author">Rolf Dobelli</div></div>
-      <button class="read-btn" data-book="pensar"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">99 vieses cognitivos catalogados com exemplos cotidianos. Dobelli não é o mais profundo, mas é o mais útil: um glossário que você pode abrir quando quiser nomear o que está acontecendo numa reunião de crédito ou numa negociação.</div>
-    <div class="highlights" id="hl-pensar">
-      <div class="hl-label kindle">KINDLE_HIGHLIGHTS</div>
-      <ul>
-        <li>Efeito halo: jornalistas deixaram-se ofuscar pela cotação das ações e passaram a ver brilho em tudo na empresa.</li>
-        <li>Caminhos alternativos são invisíveis, por isso raramente pensamos neles. O risco nunca é diretamente identificável.</li>
-        <li>"Existem dois tipos de pessoas que preveem o futuro: aquelas que nada sabem e aquelas que não sabem que nada sabem."</li>
-        <li>O pensamento intuitivo tem um fraco por histórias plausíveis. Quanto mais convincente a narrativa, mais difícil de questionar.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="rationale">Sêneca diz o que viver; Dobelli diz como não pensar errado. Filosofia prática e epistemologia num bloco coerente.</div>
-  <div class="cross">
-    <div class="cross-title">CROSS_INSIGHT · DUPLA_03</div>
-    Dobelli cataloga erros cognitivos. Sêneca os antecipou 2.000 anos antes com uma solução diferente: em vez de corrigir o pensamento passo a passo, treinar o caráter para que esses erros importem menos. A cognição estoica não é livre de vieses — é robusta o suficiente para não quebrar por causa deles. Duke reformula, Dobelli classifica, Sêneca aceita.
-  </div>
-</div>
-
-<!-- DUPLA 04 -->
-<div class="pair" id="pair-4">
-  <div class="pair-num">DUPLA_04</div>
-  <div class="pair-theme">O Mundo Interior</div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Não Há Partes Ruins</div><div class="book-author">Richard Schwartz</div></div>
-      <button class="read-btn" data-book="partes"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">O modelo IFS (Internal Family Systems) propõe que a psique é composta de partes — não uma identidade monolítica. A parte que procrastina, a que entra em pânico, a que é perfeccionista: todas têm funções protetoras. O livro ensina como falar com elas em vez de suprimi-las.</div>
-    <div class="highlights" id="hl-partes">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>Não existe parte ruim — existe parte que aprendeu uma estratégia de sobrevivência que agora atrapalha.</li>
-        <li>Gerenciar emoções é diferente de eliminá-las. A supressão não apaga — comprime.</li>
-        <li>O Self tem qualidades específicas: calma, curiosidade, clareza, compaixão. Elas não precisam ser criadas — precisam ser desbloqueadas.</li>
-        <li>Partes extremas só ficam extremas quando o sistema não tem um líder interno de confiança.</li>
-        <li>Unblending: o método de criar distância de uma parte sem suprimi-la é uma das ferramentas práticas mais poderosas do livro.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Felicidade Por Acaso</div><div class="book-author">Daniel Gilbert</div></div>
-      <button class="read-btn" data-book="felicidade"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Gilbert, psicólogo de Harvard, demonstra que somos sistematicamente ruins em prever o que vai nos fazer felizes. O cérebro fabrica versões do futuro — e do passado — com uma consistência que é impressionante e problemática ao mesmo tempo.</div>
-    <div class="highlights" id="hl-felicidade">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>Impact bias: superestimamos consistentemente o impacto emocional de eventos futuros, tanto positivos quanto negativos.</li>
-        <li>O sistema imunológico psicológico transforma fracassos em narrativas de crescimento automaticamente — sem aviso.</li>
-        <li>Prever a felicidade é sempre comparação com um estado de referência que vai mudar assim que o evento acontecer.</li>
-        <li>A experiência de terceiros é um preditor melhor da sua felicidade futura do que sua própria imaginação.</li>
-        <li>Pessoas são surpreendentemente boas em se adaptar a tudo — e surpreendentemente más em prever que vão se adaptar.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="rationale">Schwartz olha para dentro com profundidade clínica; Gilbert olha de fora com ironia acadêmica. Juntos constroem um mapa do self mais honesto que qualquer autoajuda convencional.</div>
-</div>
-
-<!-- DUPLA 05 -->
-<div class="pair" id="pair-5">
-  <div class="pair-num">DUPLA_05</div>
-  <div class="pair-theme">Dois Construtores de Mundo</div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Steve Jobs</div><div class="book-author">Walter Isaacson</div></div>
-      <button class="read-btn" data-book="jobs"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Isaacson teve acesso total e não escondeu os lados difíceis. Jobs controlava cada pixel, era cruelmente honesto, e acreditava que a realidade era negociável — o famoso reality distortion field. O que o livro revela que a maioria não comenta: a crueldade não era um defeito de caráter; era o sistema operacional.</div>
-    <div class="highlights" id="hl-jobs">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>Reality distortion field: a capacidade de fazer as pessoas acreditarem que o impossível era possível — e então elas faziam.</li>
-        <li>Simplicidade como resultado de trabalho profundo, não de ausência. Remover o desnecessário exige mais que adicionar.</li>
-        <li>Produto e narrativa como inseparáveis: Jobs não vendia hardware — vendia identidade.</li>
-        <li>A intersecção entre humanidades e tecnologia como vantagem estrutural — o argumento de Leonardo, décadas antes.</li>
-        <li>Perfeccionismo que atrasa entregas é diferente de perfeccionismo que define padrões. Jobs misturava os dois.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Elon Musk</div><div class="book-author">Walter Isaacson</div></div>
-      <button class="read-btn" data-book="musk"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Mesmo biógrafo, temperamento oposto. Onde Jobs controlava o ambiente, Musk o incendeia. O livro captura o momento mais crítico — a decisão de assumir o Twitter — com acesso em tempo real. A pergunta central que Isaacson não responde diretamente: é genialidade ou é transtorno bem-sucedido?</div>
-    <div class="highlights" id="hl-musk">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>First principles thinking aplicado: questionar cada custo, cada processo, cada suposição como se fosse arbitrária — porque geralmente é.</li>
-        <li>A urgência como ferramenta de gestão: deadlines impossíveis que movem o impossível para o difícil.</li>
-        <li>Modo demon: Isaacson descreve estados onde Musk parece inacessível a considerações externas. Alto risco, alta saída.</li>
-        <li>Integração vertical como proteção: controlar a cadeia evita dependências que se tornam chantagem em crises.</li>
-        <li>O padrão Musk: destruir a estrutura existente e construir algo melhor nas ruínas — funciona em foguetes, quebra em empresas humanas.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="rationale">Mesmo biógrafo, dois temperamentos opostos. A comparação implícita é o livro mais interessante que você cria na cabeça ao ler os dois ao mesmo tempo.</div>
-</div>
-
-<!-- DUPLA 06 -->
-<div class="pair" id="pair-6">
-  <div class="pair-num">DUPLA_06</div>
-  <div class="pair-theme">Performance &amp; Tênis</div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Open</div><div class="book-author">Andre Agassi &amp; J.R. Moehringer</div></div>
-      <button class="read-btn" data-book="agassi"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Uma das melhores autobiografias esportivas já escritas — e provavelmente a mais honesta. Agassi odiou o tênis durante décadas e ainda assim se tornou um dos maiores. O livro levanta a questão que ninguém quer fazer: e se você for extraordinário exatamente na coisa que não escolheu?</div>
-    <div class="highlights" id="hl-agassi">
-      <div class="hl-label kindle">KINDLE_HIGHLIGHTS</div>
-      <ul>
-        <li>"A vida vai atirar todo tipo de coisas no seu caminho, menos uma pia de cozinha. Mas aí atira a pia de cozinha."</li>
-        <li>O que você sente não importa no final das contas; o que o torna valente é o que você faz.</li>
-        <li>Saber como seu nervosismo se manifesta é o primeiro passo para tirar o melhor proveito possível da situação.</li>
-        <li>"A sacola de tênis é quase como o coração — a gente precisa saber exatamente o que há lá dentro, o tempo todo."</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Excelência Interior</div><div class="book-author">Michael Gervais</div></div>
-      <button class="read-btn" data-book="excelencia"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">O psicólogo de elite que trabalhou com Pete Carroll, Felix Baumgartner e os Seattle Seahawks sintetiza o que diferencia atletas de alta performance. O conceito central é ressonância — o estado onde performance e presença se tornam a mesma coisa.</div>
-    <div class="highlights" id="hl-excelencia">
-      <div class="hl-label kindle">KINDLE_HIGHLIGHTS</div>
-      <ul>
-        <li>"Aquilo que captura sua atenção captura você." O foco direciona pensamentos, que se tornam sentimentos e resultados.</li>
-        <li>O fracasso é um sentimento muito antes de se tornar um resultado.</li>
-        <li>A pressão é a recompensa oferecida àqueles que buscam a excelência.</li>
-        <li>A maestria é a busca interminável por consciência de si — vitórias e conquistas são apenas consequências.</li>
-        <li>"O mestre fracassou mais vezes do que o iniciante sequer tentou."</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="rationale">Agassi é a experiência bruta; Gervais é o mapa conceitual. Ler os dois ao mesmo tempo é ter um coach dentro da cabeça.</div>
-  <div class="cross">
-    <div class="cross-title">CROSS_INSIGHT · DUPLA_06</div>
-    Gervais: <em>"o fracasso é um sentimento muito antes de se tornar um resultado"</em>. Agassi: <em>"o que você sente não importa; o que o torna valente é o que você faz"</em>. Os dois dizem a mesma coisa de ângulos opostos — Gervais pelo framework, Agassi pela autobiografia. Conecta com <strong>Servir Para Vencer</strong> de Djokovic que você já leu.
-  </div>
-</div>
-
-<!-- DUPLA 07 -->
-<div class="pair" id="pair-7">
-  <div class="pair-num">DUPLA_07</div>
-  <div class="pair-theme">Carreira &amp; Identidade</div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Por que Generalistas Vencem</div><div class="book-author">David Epstein</div></div>
-      <button class="read-btn" data-book="generalistas"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Range é o argumento contra a hiperespecialização precoce. Em domínios "perversos" — onde as regras não são claras e o feedback é atrasado — a amplitude vence a profundidade. A maioria das carreiras que importam são domínios perversos.</div>
-    <div class="highlights" id="hl-generalistas">
-      <div class="hl-label kindle">KINDLE_HIGHLIGHTS</div>
-      <ul>
-        <li>Especialistas altamente credenciados podem ficar piores quanto mais experiência possuem — mais confiantes e mais errados.</li>
-        <li>O mundo não é golfe. Boa parte é "tênis marciano": vemos os jogadores com bolas e raquetes, mas ninguém contou as regras.</li>
-        <li>Quanto maior o quadro, mais singular é a contribuição humana. Nossa maior força é a integração ampla.</li>
-        <li>A amplitude do treinamento é prognóstico da amplitude da transferência. Mais contexto, modelos mais abstratos.</li>
-        <li>"Nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta."</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="book">
-    <div class="book-top">
-      <div><div class="book-title">Nascente (The Fountainhead)</div><div class="book-author">Ayn Rand</div></div>
-      <button class="read-btn" data-book="nascente"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">Howard Roark é o arquiteto que recusa qualquer concessão ao gosto externo. Rand usa a ficção para fazer um argumento filosófico sobre individualismo radical. O livro não é sobre arquitetura — é sobre a questão de onde vem a motivação criativa e o que acontece quando ela é corrompida.</div>
-    <div class="highlights" id="hl-nascente">
-      <div class="hl-label">INSIGHTS</div>
-      <ul>
-        <li>O criador precisa de dois corações: um para criar e um para defender o que criou.</li>
-        <li>Segundas mãos: as pessoas que não têm um eu próprio e por isso vivem refletindo os outros.</li>
-        <li>Integridade como alinhamento entre pensamento e ação — não como virtude moral, mas como coerência estrutural.</li>
-        <li>O pior inimigo do criador não é o crítico externo: é o criador que começa a criar para o crítico.</li>
-        <li>Toda grande obra é um ato de egoísmo racional — e Rand está completamente em paz com isso.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="rationale">Epstein defende o generalista curioso; Rand defende o indivíduo intransigente. A tensão entre os dois é deliberada.</div>
-  <div class="cross">
-    <div class="cross-title">CROSS_INSIGHT · DUPLA_07</div>
-    Seus 41 grifos de Epstein: <em>"pensar de forma relacional é uma das razões pelas quais dominamos o planeta"</em>. Rand vai na direção oposta — o criador que recusa qualquer analogia externa como compromisso. A síntese: relacional na coleta de inputs, intransigente na síntese final. Conecta com <strong>Maestria</strong> de Greene (47 grifos seus).
-  </div>
-</div>
-
-<!-- SOLO -->
-<div class="pair" id="pair-solo" style="border-top-color:var(--gold)">
-  <div class="pair-num" style="color:var(--gold)">FINALE ★</div>
-  <div class="pair-theme" style="color:var(--gold)">Síntese · Solo</div>
-
-  <div class="book" style="border-bottom:none">
-    <div class="book-top">
-      <div><div class="book-title">Leonardo da Vinci</div><div class="book-author">Walter Isaacson</div></div>
-      <button class="read-btn" data-book="leonardo"><span>○</span> mark_read</button>
-    </div>
-    <div class="book-summary">O último livro, lido sozinho, depois de tudo que veio antes. Leonardo é o argumento definitivo de Epstein — o generalista supremo. É também a versão oposta de Jobs e Musk: um construtor que frequentemente não terminava o que começava, porque o processo de entender era mais interessante que o produto final.</div>
-    <div class="highlights" id="hl-leonardo">
-      <div class="hl-label kindle">KINDLE_HIGHLIGHTS</div>
-      <ul>
-        <li>A habilidade de conectar disciplinas — artes e ciências, humanidades e tecnologia — é a chave para a inovação e genialidade.</li>
-        <li>"Aquele que pode ir à nascente de um rio não vai a um jarro de água."</li>
-        <li>O gênio dentro de Leonardo era humano; tinha sido forjado por vontade e ambição próprias. Não era um recipiente divino.</li>
-        <li>Um desejo constante de se surpreender com o mundo cotidiano tem o poder de deixar cada momento muito mais rico.</li>
-        <li>Seu método: experimentação, curiosidade, e admirar-se com fenômenos nos quais o restante de nós para de prestar atenção após a infância.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="cross">
-    <div class="cross-title">CROSS_INSIGHT · FINALE</div>
-    Leonardo fecha o roteiro porque é o argumento vivo de Epstein — o generalista supremo — e ao mesmo tempo a antítese de Rand: não terminou quase nada, e ainda assim é o maior. Nota: Leonardo tem 15 grifos seus. Thinking in Bets tem 99. Excelência Interior tem 80. A profundidade com que você leu cada livro já é um dado — o roteiro reflete seus interesses reais.
-  </div>
-</div>
-
-<!-- TABLE -->
-<div class="table-wrap">
-  <div class="sec-label">VISÃO_GERAL</div>
-  <table>
-    <thead><tr><th>#</th><th>Livro A</th><th>Livro B</th><th>Tema</th><th style="text-align:center">Status</th></tr></thead>
-    <tbody id="summaryTable"></tbody>
-  </table>
-</div>
-
-<!-- ORBIT -->
-<div style="margin-top:3rem">
-  <div class="sec-label">ÓRBITA · JÁ LIDOS, AINDA VIVOS</div>
-  <p style="font-size:.8rem;color:var(--text2);margin-bottom:1.2rem;font-family:var(--font-mono)">// livros com muitos grifos seus que se conversam com o roteiro atual</p>
-  <div class="orbit-grid">
-    <div class="orbit-card">
-      <div class="orbit-title">Previsivelmente Irracional</div>
-      <div class="orbit-author">Dan Ariely · 129 grifos</div>
-      <div class="orbit-conn">O triângulo com Duke e Cialdini. Ariely fecha a tríade comportamental: Duke explica a decisão ruim, Cialdini como é explorada, Ariely por que é estrutural — e não consertável.</div>
-      <div class="orbit-tag">← DUPLA_01</div>
-    </div>
-    <div class="orbit-card">
-      <div class="orbit-title">Almanack of Naval Ravikant</div>
-      <div class="orbit-author">Eric Jorgenson · 102 grifos</div>
-      <div class="orbit-conn">Naval é o Leonardo moderno — engenheiro, filósofo, investidor. Conecta com Generalistas (amplitudes como vantagem), Excelência Interior e Leonardo (curiosidade como sistema).</div>
-      <div class="orbit-tag">← DUPLAS 06, 07, FINALE</div>
-    </div>
-    <div class="orbit-card">
-      <div class="orbit-title">Antifrágil</div>
-      <div class="orbit-author">Nassim Taleb · 73 grifos</div>
-      <div class="orbit-conn">Onde Thinking in Bets para, Antifrágil começa. Duke diz "incorpore a incerteza"; Taleb diz "construa sistemas que melhoram com ela".</div>
-      <div class="orbit-tag">← DUPLAS 01, 02</div>
-    </div>
-    <div class="orbit-card">
-      <div class="orbit-title">Dominando o Ciclo de Mercado</div>
-      <div class="orbit-author">Howard Marks · 72 grifos</div>
-      <div class="orbit-conn">O mais diretamente ligado ao seu trabalho em crédito. Marks aplica o pensamento probabilístico de Duke aos ciclos.</div>
-      <div class="orbit-tag">← DUPLA_01, mercados</div>
-    </div>
-    <div class="orbit-card">
-      <div class="orbit-title">Maestria</div>
-      <div class="orbit-author">Robert Greene · 47 grifos</div>
-      <div class="orbit-conn">Greene e Epstein: especialização profunda e longa vs. período de experimentação. Mas no caminho, Greene traça exatamente o período de experimentação que Epstein defende.</div>
-      <div class="orbit-tag">← DUPLA_07, FINALE</div>
-    </div>
-    <div class="orbit-card">
-      <div class="orbit-title">Nexus</div>
-      <div class="orbit-author">Yuval Harari · 67 grifos</div>
-      <div class="orbit-conn">História das redes de informação. Conecta com Generalistas pelo argumento de que os grandes saltos vieram sempre da conexão entre domínios, não do aprofundamento dentro deles.</div>
-      <div class="orbit-tag">← DUPLAS 05, 07</div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /tab-roteiro -->
-
-<!-- ═══════════════════════════════════════
-     TAB: INSIGHTS
-═══════════════════════════════════════ -->
-<div id="tab-insights" class="tab-panel">
-
-  <div class="sec-label">CROSS_INSIGHTS · ENTRE LIVROS</div>
-
-  <div class="cross-block">
-    <div class="cross-block-title">DUPLA_01 · Probabilidade &amp; Influência</div>
-    Duke descreve o <em>resulting</em>. Cialdini descreve o <em>contraste</em>. Os dois são o mesmo fenômeno visto de ângulos opostos: a mente humana não avalia em absoluto, avalia em relação. Em mercados de crédito, isso é devastador. Fecham o triângulo com Ariely (129 grifos seus).
-  </div>
-
-  <div class="cross-block">
-    <div class="cross-block-title">DUPLA_03 · Filosofia &amp; Cognição</div>
-    Dobelli cataloga 99 erros cognitivos. Sêneca os antecipou 2.000 anos antes com uma solução diferente: treinar o caráter para que os erros importem menos. Duke reformula, Dobelli classifica, Sêneca aceita — três respostas distintas ao mesmo problema.
-  </div>
-
-  <div class="cross-block">
-    <div class="cross-block-title">DUPLA_06 · Performance &amp; Tênis</div>
-    Gervais: <em>"o fracasso é um sentimento muito antes de se tornar um resultado"</em>. Agassi: <em>"o que o torna valente é o que você faz"</em>. Gervais pelo framework, Agassi pela autobiografia. Agassi jogou décadas sem o mapa; Gervais entrega o mapa antes do jogo começar.
-  </div>
-
-  <div class="cross-block">
-    <div class="cross-block-title">DUPLA_07 · Carreira &amp; Identidade</div>
-    Epstein: <em>"pensar de forma relacional é por que dominamos o planeta"</em>. Rand: o criador radical que recusa qualquer analogia como compromisso. Síntese produtiva: relacional na coleta de inputs, intransigente na síntese final. Intersecção exata com Maestria de Greene.
-  </div>
-
-  <div class="cross-block">
-    <div class="cross-block-title">FINALE · Leonardo da Vinci</div>
-    Leonardo é o generalista supremo de Epstein e a antítese de Rand. Nota: seus 15 grifos de Leonardo vs 99 de Thinking in Bets vs 80 de Excelência Interior. A intensidade de leitura já revela prioridades reais.
-  </div>
-
-  <div class="sec-label" style="margin-top:2.5rem">INSIGHTS POR LIVRO</div>
-
-  <div class="insight-block">
-    <div class="insight-book">Thinking in Bets</div>
-    <div class="insight-meta">Annie Duke · 99 grifos no Kindle</div>
-    <ul class="insight-list">
-      <li>O que caracteriza uma ótima decisão não é um ótimo resultado — é consequência de um bom processo.</li>
-      <li>A vida é mais como o pôquer do que como o xadrez.</li>
-      <li>10-10-10: quais as consequências da sua opção em dez minutos, dez meses, dez anos?</li>
-      <li>Pré-mortem: visualizar o fracasso aumenta a probabilidade de evitá-lo mais que visualizar o sucesso.</li>
-      <li>Quanto melhor você é com os números, melhor você fica em distorcer esses números para confirmar suas crenças.</li>
-    </ul>
-  </div>
-
-  <div class="insight-block">
-    <div class="insight-book">Armas da Persuasão 2.0</div>
-    <div class="insight-meta">Robert Cialdini · 26 grifos no Kindle</div>
-    <ul class="insight-list">
-      <li>As pessoas simplesmente gostam de ter motivos para o que fazem — mesmo que não sejam os reais.</li>
-      <li>Princípio do contraste: venda o terno primeiro. A referência muda tudo que vem depois.</li>
-      <li>Reciprocidade cria obrigação mesmo quando a dívida foi imposta, não escolhida.</li>
-      <li>Amostras grátis são presentes — e acionam a lei da reciprocidade em jiu-jitsu comercial.</li>
-    </ul>
-  </div>
-
-  <div class="insight-block">
-    <div class="insight-book">Arte de Pensar Claramente</div>
-    <div class="insight-meta">Rolf Dobelli · 9 grifos no Kindle</div>
-    <ul class="insight-list">
-      <li>Efeito halo: a cotação das ações fez todos verem brilho em tudo na empresa.</li>
-      <li>Caminhos alternativos são invisíveis. O risco nunca é diretamente identificável.</li>
-      <li>"Existem dois tipos de pessoas que preveem o futuro: as que nada sabem e as que não sabem que nada sabem."</li>
-      <li>O pensamento intuitivo tem um fraco por histórias plausíveis.</li>
-    </ul>
-  </div>
-
-  <div class="insight-block">
-    <div class="insight-book">Open — Agassi</div>
-    <div class="insight-meta">Andre Agassi · 4 grifos no Kindle</div>
-    <ul class="insight-list">
-      <li>"A vida vai atirar todo tipo de coisas no seu caminho, menos uma pia de cozinha. Mas aí atira."</li>
-      <li>O que você sente não importa no final; o que o torna valente é o que você faz.</li>
-      <li>Saber como seu nervosismo se manifesta é o primeiro passo para tirar proveito da situação.</li>
-      <li>"A sacola de tênis é quase como o coração — a gente precisa saber o que há lá dentro, o tempo todo."</li>
-    </ul>
-  </div>
-
-  <div class="insight-block">
-    <div class="insight-book">Excelência Interior</div>
-    <div class="insight-meta">Michael Gervais · 80 grifos no Kindle</div>
-    <ul class="insight-list">
-      <li>"Aquilo que captura sua atenção captura você."</li>
-      <li>O fracasso é um sentimento muito antes de se tornar um resultado.</li>
-      <li>A pressão é a recompensa para quem busca a excelência.</li>
-      <li>A maestria é a busca interminável por consciência de si — conquistas são apenas consequências.</li>
-      <li>"O mestre fracassou mais vezes do que o iniciante sequer tentou."</li>
-    </ul>
-  </div>
-
-  <div class="insight-block">
-    <div class="insight-book">Por que Generalistas Vencem</div>
-    <div class="insight-meta">David Epstein · 41 grifos no Kindle</div>
-    <ul class="insight-list">
-      <li>Especialistas credenciados podem ficar piores quanto mais experiência possuem — mais confiantes, mais errados.</li>
-      <li>O mundo não é golfe. Boa parte é "tênis marciano": ninguém contou as regras.</li>
-      <li>Nossa maior força é a integração ampla — exatamente o oposto da especialização estrita.</li>
-      <li>"Nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta."</li>
-    </ul>
-  </div>
-
-  <div class="insight-block">
-    <div class="insight-book">Leonardo da Vinci</div>
-    <div class="insight-meta">Walter Isaacson · 15 grifos no Kindle</div>
-    <ul class="insight-list">
-      <li>Conectar disciplinas — artes, ciências, humanidades, tecnologia — é a chave para inovação e genialidade.</li>
-      <li>"Aquele que pode ir à nascente de um rio não vai a um jarro de água."</li>
-      <li>O gênio de Leonardo era humano; forjado por vontade e ambição próprias.</li>
-      <li>Um desejo constante de se surpreender com o mundo cotidiano deixa cada momento mais rico.</li>
-    </ul>
-  </div>
-
-</div><!-- /tab-insights -->
-
-<!-- ═══════════════════════════════════════
-     TAB: GRIFOS
-═══════════════════════════════════════ -->
-<div id="tab-grifos" class="tab-panel">
-
-  <div class="grifo-book">
-    <div class="grifo-header">
-      <span class="grifo-name">Thinking in Bets</span>
-      <span class="grifo-count">99 grifos no Kindle</span>
-    </div>
-    <div class="grifo-item">Para começar, nossos cérebros evoluíram para criar certeza e ordem. Ficamos incomodados com a ideia de que a sorte desempenha um papel nada desprezível em nossas vidas.</div>
-    <div class="grifo-item">O que caracteriza uma ótima decisão não é um ótimo resultado. Uma ótima decisão é consequência de um bom processo.</div>
-    <div class="grifo-item">A vida, porém, é mais como o pôquer. Você poderia tomar a decisão mais inteligente e ponderada e ainda assim se dar muito mal.</div>
-    <div class="grifo-item">Em última análise, parte da habilidade na vida deve-se a aprender a calibrar melhor as crenças, usando experiência e informações para atualizá-las com mais objetividade.</div>
-    <div class="grifo-item">Acontece que, quanto melhor você é com os números, melhor você fica em distorcer esses números para que confirmem suas crenças.</div>
-    <div class="grifo-item">Incorporar a incerteza na maneira como pensamos sobre nossas crenças traz muitos benefícios. Ao expressar nosso nível de confiança, mudamos nosso modo de ver o mundo.</div>
-    <div class="grifo-item">A maneira como encaramos os resultados é previsivelmente padronizada: o crédito pelas coisas boas é nosso, e o das coisas ruins, obra da sorte.</div>
-    <div class="grifo-item">"Todo processo de 10-10-10 começa com uma pergunta: quais são as consequências de cada uma das minhas opções em dez minutos? Em dez meses? Em dez anos?"</div>
-    <div class="grifo-item">Ao recrutar o eu do passado e o eu do futuro, ativamos as vias neurais que envolvem o córtex pré-frontal, inibindo a mente emocional e mantendo uma perspectiva mais racional.</div>
-    <div class="grifo-item">Apesar da sabedoria popular, incorporar a visualização negativa nos torna mais propensos a atingir nossos objetivos do que a visualização positiva.</div>
-    <div class="grifo-item">Os benefícios de reconhecer oportunidades extras de aprendizado vão aumentando com o tempo. Tal como juros compostos, o efeito cumulativo pode ser enorme.</div>
-  </div>
-
-  <div class="grifo-book">
-    <div class="grifo-header">
-      <span class="grifo-name">Armas da Persuasão 2.0</span>
-      <span class="grifo-count">26 grifos no Kindle</span>
-    </div>
-    <div class="grifo-item">Os clientes estavam usando um princípio simplificador — um estereótipo — para guiar suas compras: caro = bom.</div>
-    <div class="grifo-item">As pessoas simplesmente gostam de ter motivos para o que fazem.</div>
-    <div class="grifo-item">O princípio do contraste afeta o modo como vemos a diferença entre duas coisas apresentadas uma após a outra.</div>
-    <div class="grifo-item">A regra da reciprocidade: nossas origens evoluíram num sistema de troca honrada de obrigações.</div>
-    <div class="grifo-item">A beleza da amostra grátis é que também é um presente — e presentes acionam a lei da reciprocidade, em verdadeiro estilo jiu-jitsu.</div>
-    <div class="grifo-item">Para que eu concorde com seu pedido: primeiro me faça um pedido maior, que eu provavelmente vá recusar. Então, depois que eu recusar, o pedido real.</div>
-    <div class="grifo-item">A maioria de nós acha extremamente desagradável dever favores. Esse peso é exatamente o que o princípio explora.</div>
-  </div>
-
-  <div class="grifo-book">
-    <div class="grifo-header">
-      <span class="grifo-name">A Arte de Pensar Claramente</span>
-      <span class="grifo-count">9 grifos no Kindle</span>
-    </div>
-    <div class="grifo-item">Efeito halo: os jornalistas deixaram-se ofuscar pela cotação das ações e passaram a ver brilho em tudo na empresa.</div>
-    <div class="grifo-item">Um grande número de estudos comprovou que consideramos pessoas bonitas automaticamente mais simpáticas, mais honestas e mais inteligentes.</div>
-    <div class="grifo-item">Caminhos alternativos são invisíveis, por isso raramente pensamos neles.</div>
-    <div class="grifo-item">Moral da história: o risco nunca é diretamente identificável.</div>
-    <div class="grifo-item">"Existem dois tipos de pessoas que preveem o futuro: aquelas que nada sabem e aquelas que não sabem que nada sabem."</div>
-    <div class="grifo-item">Por que caímos na falácia da conjunção? Porque temos uma compreensão intuitiva para histórias "consistentes". Quanto mais convincente a descrição, mais difícil de questionar.</div>
-  </div>
-
-  <div class="grifo-book">
-    <div class="grifo-header">
-      <span class="grifo-name">Open — Andre Agassi</span>
-      <span class="grifo-count">4 grifos no Kindle</span>
-    </div>
-    <div class="grifo-item">A vida vai atirar todo tipo de coisas no seu caminho, menos uma pia de cozinha. Mas aí atira a pia de cozinha. Cabe a você escapar dos obstáculos.</div>
-    <div class="grifo-item">O que você sente não importa no final das contas; o que o torna valente é o que você faz.</div>
-    <div class="grifo-item">Saber como seu nervosismo se manifesta, o que ele revela sobre sua cabeça e seu corpo, é o primeiro passo para tirar o melhor proveito possível da situação.</div>
-    <div class="grifo-item">A sacola de tênis é quase como o coração — a gente precisa saber exatamente o que há lá dentro, o tempo todo.</div>
-  </div>
-
-  <div class="grifo-book">
-    <div class="grifo-header">
-      <span class="grifo-name">Excelência Interior</span>
-      <span class="grifo-count">80 grifos no Kindle</span>
-    </div>
-    <div class="grifo-item">"Aquilo que captura sua atenção captura você." Nosso foco direciona o caminho dos pensamentos, e esses pensamentos se tornam sentimentos, ações e resultados.</div>
-    <div class="grifo-item">Há apenas uma forma de mudar radicalmente de comportamento: mudar radicalmente seu ambiente.</div>
-    <div class="grifo-item">O fracasso é um sentimento muito antes de se tornar um resultado.</div>
-    <div class="grifo-item">Estar completamente presente é ter uma mente que não está pensando no passado nem no futuro.</div>
-    <div class="grifo-item">A pressão é a recompensa oferecida àqueles que buscam a excelência.</div>
-    <div class="grifo-item">A maestria é a busca interminável por consciência de si, disciplina e crescimento pessoal — vitórias são apenas consequências.</div>
-    <div class="grifo-item">"O mestre fracassou mais vezes do que o iniciante sequer tentou." A busca pela maestria, não pelo placar, é o caminho.</div>
-    <div class="grifo-item">Ironicamente, abrir mão do controle é o segredo para retomar o controle.</div>
-    <div class="grifo-item">A ansiedade é fruto de uma mente com pensamentos em excesso, gerados por preocupações em excesso.</div>
-    <div class="grifo-item">Um propósito claro e significativo nos permite estar mais presentes, porque nos tornamos menos apegados ao resultado.</div>
-  </div>
-
-  <div class="grifo-book">
-    <div class="grifo-header">
-      <span class="grifo-name">Por que Generalistas Vencem</span>
-      <span class="grifo-count">41 grifos no Kindle</span>
-    </div>
-    <div class="grifo-item">Especialistas altamente credenciados podem ter a mente tão estreita que ficam piores quanto mais experiência possuem — mais confiantes e mais errados. Uma combinação perigosa.</div>
-    <div class="grifo-item">O desafio é como manter os benefícios da amplitude, da experiência diversificada, do pensamento interdisciplinar em um mundo que cada vez mais incentiva o oposto.</div>
-    <div class="grifo-item">O mundo não é golfe. Boa parte é "tênis marciano": dá para ver os jogadores com bolas e raquetes, mas ninguém contou quais são as regras.</div>
-    <div class="grifo-item">Quanto maior o quadro, mais singular é a potencial contribuição humana. Nossa maior força é exatamente o oposto da especialização estrita.</div>
-    <div class="grifo-item">A amplitude do treinamento é um prognóstico da amplitude da transferência. Mais contexto gera modelos abstratos mais transferíveis.</div>
-    <div class="grifo-item">"Nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta. Relações são muito difíceis para outras espécies."</div>
-    <div class="grifo-item">Os mestres da improvisação aprendem como bebês: mergulham, imitam e improvisam primeiro; aprendem as regras formais depois.</div>
-    <div class="grifo-item">O período de experimentação não é um detalhe para o desenvolvimento de grandes atletas — é parte central dele.</div>
-  </div>
-
-  <div class="grifo-book">
-    <div class="grifo-header">
-      <span class="grifo-name">Leonardo da Vinci</span>
-      <span class="grifo-count">15 grifos no Kindle</span>
-    </div>
-    <div class="grifo-item">A habilidade de conectar disciplinas — artes e ciências, humanidades e tecnologia — é a chave para a inovação, imaginação e genialidade.</div>
-    <div class="grifo-item">"Aquele que pode ir à nascente de um rio não vai a um jarro de água."</div>
-    <div class="grifo-item">O gênio dentro de Leonardo era humano; tinha sido forjado por vontade e ambição próprias. Não era um recipiente divino — era construído.</div>
-    <div class="grifo-item">Ele tinha uma imaginação tão fértil que chegava a flertar com os limites da fantasia — algo que também podemos tentar preservar em nós mesmos.</div>
-    <div class="grifo-item">Um desejo constante de se surpreender com o mundo cotidiano tem o poder de deixar cada momento de nossa vida muito mais rico.</div>
-    <div class="grifo-item">Seu método era baseado na experimentação, na curiosidade e na habilidade de se admirar com fenômenos nos quais o restante de nós dificilmente presta atenção após a infância.</div>
-    <div class="grifo-item">Sua postura a favor do livre pensar foi o que o salvou de ser apenas mais um seguidor do pensamento tradicional.</div>
-  </div>
-
-</div><!-- /tab-grifos -->
-
-<!-- ═══════════════════════════════════════
-     TAB: DEPLOY
-═══════════════════════════════════════ -->
-<div id="tab-export" class="tab-panel">
-
-  <div class="sec-label">DEPLOY · GITHUB_PAGES</div>
-
-  <div class="export-card">
-    <div class="export-card-title">// Exportar arquivo</div>
-    <div class="steps">
-      Dois métodos. Use o <strong style="color:var(--neon)">Método 2</strong> — é mais confiável.
-    </div>
-    <div class="export-btns">
-      <button class="btn" id="btnDownload">⬇ download index.html</button>
-      <button class="btn secondary" id="btnCopy">⎘ copiar html</button>
-      <span class="copy-ok" id="copyOk">✓ COPIADO!</span>
-    </div>
-  </div>
-
-  <div class="export-card">
-    <div class="export-card-title">// Método 1 — Upload de arquivo</div>
-    <div class="steps">
-      1. Clique em <strong>download index.html</strong> acima<br>
-      2. Crie um repositório público no GitHub (<a href="https://github.com/new" target="_blank">github.com/new</a>)<br>
-      3. Na tela do repositório vazio → <em>"uploading an existing file"</em><br>
-      4. ⚠️ Confirme que o nome é <code>index.html</code> (exatamente assim) antes de commitar<br>
-      5. Settings → Pages → Branch: main → <code>/ (root)</code> → Save<br>
-      6. Aguarde ~2 minutos
-    </div>
-  </div>
-
-  <div class="export-card">
-    <div class="export-card-title">// Método 2 — Criar arquivo direto no editor (recomendado)</div>
-    <div class="steps">
-      1. Clique em <strong>copiar html</strong> acima<br>
-      2. Crie um repositório público no GitHub (<a href="https://github.com/new" target="_blank">github.com/new</a>)<br>
-      3. Na tela do repositório vazio → <em>"creating a new file"</em><br>
-      4. No campo do nome, digite: <code>index.html</code><br>
-      5. Clique na área de texto do editor → <kbd>Ctrl+V</kbd> ou <kbd>Cmd+V</kbd><br>
-      6. <em>Commit changes</em><br>
-      7. Settings → Pages → Branch: main → <code>/ (root)</code> → Save<br>
-      8. Aguarde ~2 minutos
-    </div>
-  </div>
-
-  <div class="export-card">
-    <div class="export-card-title">// Gerar link final</div>
-    <div class="gh-link-gen">
-      <input id="ghUser" placeholder="usuario-github" spellcheck="false">
-      <input id="ghRepo" placeholder="nome-repositorio" spellcheck="false">
-      <button onclick="buildGhLink()">gerar link</button>
-      <div id="ghResult"></div>
-    </div>
-  </div>
-
-</div><!-- /tab-export -->
-
-<footer>
-  // inspirado em <a href="https://danwang.co/books/" target="_blank">danwang.co/books</a> · progresso salvo automaticamente · <span id="footerDate"></span>
-</footer>
-
-</div><!-- .page -->
-
-<script>
-// ─── DATA ──────────────────────────────────────────
-const PAIRS = [
-  { num:'01', books:['thinking-bets','armas'],     a:'Thinking in Bets',        b:'Armas da Persuasão 2.0',    tema:'Probabilidade & Influência' },
-  { num:'02', books:['dopamina','conforto'],        a:'Nação Dopamina',          b:'A Crise do Conforto',       tema:'O Corpo como Sinal' },
-  { num:'03', books:['seneca','pensar'],            a:'Café com Sêneca',         b:'Arte de Pensar Claramente', tema:'Filosofia & Cognição' },
-  { num:'04', books:['partes','felicidade'],        a:'Não Há Partes Ruins',     b:'Felicidade Por Acaso',      tema:'O Mundo Interior' },
-  { num:'05', books:['jobs','musk'],               a:'Steve Jobs',              b:'Elon Musk',                 tema:'Dois Construtores' },
-  { num:'06', books:['agassi','excelencia'],        a:'Open (Agassi)',           b:'Excelência Interior',       tema:'Performance & Tênis' },
-  { num:'07', books:['generalistas','nascente'],   a:'Generalistas Vencem',     b:'Nascente',                  tema:'Carreira & Identidade' },
-  { num:'★',  books:['leonardo'],                  a:'Leonardo da Vinci',       b:'—',                         tema:'Finale · Solo' },
-];
-
-const PAIR_IDS = ['pair-1','pair-2','pair-3','pair-4','pair-5','pair-6','pair-7','pair-solo'];
-
-const GRIFOS = [
-  { t:'O que caracteriza uma ótima decisão não é um ótimo resultado — é consequência de um bom processo.', b:'Thinking in Bets' },
-  { t:'A vida é mais como o pôquer: você pode tomar a decisão mais ponderada e ainda se dar muito mal.', b:'Thinking in Bets' },
-  { t:'Quanto melhor você é com os números, melhor você fica em distorcer esses números para confirmar suas crenças.', b:'Thinking in Bets' },
-  { t:'Incorporar a incerteza na maneira como pensamos traz benefícios. Ao expressar nosso nível de confiança, mudamos nosso modo de ver o mundo.', b:'Thinking in Bets' },
-  { t:'Como juros compostos, o efeito cumulativo de ser um pouco melhor na tomada de decisões pode ser enorme.', b:'Thinking in Bets' },
-  { t:'Pré-mortem: incorporar a visualização negativa nos torna mais propensos a atingir nossos objetivos do que a positiva.', b:'Thinking in Bets' },
-  { t:'As pessoas simplesmente gostam de ter motivos para o que fazem — mesmo que esses motivos não sejam os reais.', b:'Armas da Persuasão 2.0' },
-  { t:'Princípio do contraste: venda o terno primeiro. A referência muda tudo que vem depois.', b:'Armas da Persuasão 2.0' },
-  { t:'Amostras grátis são presentes — e presentes acionam a lei da reciprocidade, em verdadeiro estilo jiu-jitsu.', b:'Armas da Persuasão 2.0' },
-  { t:'A maioria de nós acha extremamente desagradável dever favores. Esse peso é exatamente o que o princípio da reciprocidade explora.', b:'Armas da Persuasão 2.0' },
-  { t:'Caminhos alternativos são invisíveis, por isso raramente pensamos neles. O risco nunca é diretamente identificável.', b:'Arte de Pensar Claramente' },
-  { t:'Existem dois tipos de pessoas que preveem o futuro: aquelas que nada sabem e aquelas que não sabem que nada sabem.', b:'Arte de Pensar Claramente' },
-  { t:'O pensamento intuitivo tem um fraco por histórias plausíveis. Quanto mais convincente a narrativa, mais difícil de questionar.', b:'Arte de Pensar Claramente' },
-  { t:'O que você sente não importa no final das contas; o que o torna valente é o que você faz.', b:'Open — Agassi' },
-  { t:'A vida vai atirar todo tipo de coisas no seu caminho, menos uma pia de cozinha. Mas aí atira a pia de cozinha.', b:'Open — Agassi' },
-  { t:'A sacola de tênis é quase como o coração — a gente precisa saber exatamente o que há lá dentro, o tempo todo.', b:'Open — Agassi' },
-  { t:'Aquilo que captura sua atenção captura você. Nosso foco direciona pensamentos, que se tornam sentimentos e resultados.', b:'Excelência Interior' },
-  { t:'O fracasso é um sentimento muito antes de se tornar um resultado.', b:'Excelência Interior' },
-  { t:'Há apenas uma forma de mudar radicalmente de comportamento: mudar radicalmente seu ambiente.', b:'Excelência Interior' },
-  { t:'Ironicamente, abrir mão do controle é o segredo para retomar o controle.', b:'Excelência Interior' },
-  { t:'A pressão é a recompensa oferecida àqueles que buscam a excelência.', b:'Excelência Interior' },
-  { t:'O mestre fracassou mais vezes do que o iniciante sequer tentou. A maestria, não o placar, é o caminho.', b:'Excelência Interior' },
-  { t:'Um propósito claro nos permite estar mais presentes, porque nos tornamos menos apegados ao resultado.', b:'Excelência Interior' },
-  { t:'Especialistas credenciados podem ficar piores quanto mais experiência possuem — mais confiantes e mais errados. Uma combinação perigosa.', b:'Por que Generalistas Vencem' },
-  { t:'O mundo não é golfe. Boa parte é "tênis marciano": vemos os jogadores, mas ninguém contou as regras.', b:'Por que Generalistas Vencem' },
-  { t:'Nossa maior força é exatamente o oposto da especialização estrita: a capacidade de integração ampla.', b:'Por que Generalistas Vencem' },
-  { t:'Nossa habilidade de pensar de forma relacional é uma das razões pelas quais dominamos o planeta.', b:'Por que Generalistas Vencem' },
-  { t:'A amplitude do treinamento é prognóstico da amplitude da transferência. Mais contexto, modelos mais abstratos.', b:'Por que Generalistas Vencem' },
-  { t:'A habilidade de conectar disciplinas — artes, ciências, humanidades, tecnologia — é a chave para a inovação e genialidade.', b:'Leonardo da Vinci' },
-  { t:'Aquele que pode ir à nascente de um rio não vai a um jarro de água.', b:'Leonardo da Vinci' },
-  { t:'O gênio de Leonardo era humano; forjado por vontade e ambição próprias. Não era um recipiente divino — era construído.', b:'Leonardo da Vinci' },
-  { t:'Um desejo constante de se surpreender com o mundo cotidiano tem o poder de deixar cada momento muito mais rico.', b:'Leonardo da Vinci' },
-];
-
-const STORAGE_KEY = 'rl_v4';
-let state = {};
-
-// ─── STATE ─────────────────────────────────────────
-function loadState() {
-  try { const s = localStorage.getItem(STORAGE_KEY); if (s) state = JSON.parse(s); } catch(e) {}
-}
-function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-}
-
-// ─── RENDER ────────────────────────────────────────
-function applyBook(id, isRead) {
-  const btn = document.querySelector('[data-book="' + id + '"]');
-  const hl  = document.getElementById('hl-' + id);
-  if (btn) {
-    if (isRead) { btn.classList.add('is-read'); btn.innerHTML = '<span>✓</span> read'; }
-    else        { btn.classList.remove('is-read'); btn.innerHTML = '<span>○</span> mark_read'; }
-  }
-  if (hl) { isRead ? hl.classList.add('visible') : hl.classList.remove('visible'); }
-}
-
-function updatePairs() {
-  PAIRS.forEach((p, i) => {
-    const el = document.getElementById(PAIR_IDS[i]);
-    if (!el) return;
-    el.classList.toggle('all-read', p.books.every(b => state[b]));
-  });
-}
-
-function updateProgress() {
-  const all = PAIRS.flatMap(p => p.books);
-  const n = all.filter(b => state[b]).length;
-  const pct = Math.round(n / 15 * 100);
-  const fill = document.getElementById('progressFill');
-  const txt  = document.getElementById('progressText');
-  if (fill) fill.style.width = pct + '%';
-  if (txt)  txt.textContent = n + '/15';
-}
-
-function renderTable() {
-  const tbody = document.getElementById('summaryTable');
-  if (!tbody) return;
-  tbody.innerHTML = PAIRS.map(p => {
-    const dots = p.books.map(b =>
-      '<span class="dot' + (state[b] ? ' read' : '') + '"></span>'
-    ).join(' ');
-    return '<tr>' +
-      '<td style="color:var(--neon);font-family:var(--font-mono);font-size:.65rem">' + p.num + '</td>' +
-      '<td style="font-size:.82rem">' + p.a + '</td>' +
-      '<td style="font-size:.82rem;color:var(--text2)">' + p.b + '</td>' +
-      '<td style="font-size:.75rem;color:var(--text2);font-style:italic">' + p.tema + '</td>' +
-      '<td style="text-align:center">' + dots + '</td>' +
-    '</tr>';
-  }).join('');
-}
-
-function fullRender() {
-  PAIRS.flatMap(p => p.books).forEach(b => applyBook(b, !!state[b]));
-  updatePairs();
-  updateProgress();
-  renderTable();
-}
-
-// ─── DAILY GRIFO ───────────────────────────────────
-function initDailyGrifo() {
-  const now = new Date();
-  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-  const g = GRIFOS[dayOfYear % GRIFOS.length];
-  const textEl   = document.getElementById('dailyText');
-  const sourceEl = document.getElementById('dailySource');
-  if (textEl)   textEl.textContent = '\u201c' + g.t + '\u201d';
-  if (sourceEl) sourceEl.textContent = '— ' + g.b;
-}
-
-// ─── TABS ──────────────────────────────────────────
-function initTabs() {
-  document.querySelectorAll('.tab-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-      btn.classList.add('active');
-      var panel = document.getElementById('tab-' + btn.dataset.tab);
-      if (panel) panel.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  });
-}
-
-// ─── READ BUTTONS ──────────────────────────────────
-function initReadButtons() {
-  document.querySelectorAll('.read-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var id = btn.dataset.book;
-      state[id] = !state[id];
-      saveState();
-      applyBook(id, state[id]);
-      updatePairs();
-      updateProgress();
-      renderTable();
-    });
-  });
-}
-
-// ─── EXPORT ────────────────────────────────────────
-function getCleanHTML() {
-  // Clone and reset tab state
-  var clone = document.documentElement.cloneNode(true);
-  var panels = clone.querySelectorAll('.tab-panel');
-  var btns   = clone.querySelectorAll('.tab-btn');
-  panels.forEach(function(p, i) { p.classList.toggle('active', i === 0); });
-  btns.forEach(function(b, i)   { b.classList.toggle('active', i === 0); });
-  return '<!DOCTYPE html>\n<html lang="pt-BR">\n' + clone.innerHTML + '\n</html>';
-}
-
-function initExport() {
-  var btnDl   = document.getElementById('btnDownload');
-  var btnCp   = document.getElementById('btnCopy');
-  var copyOk  = document.getElementById('copyOk');
-
-  if (btnDl) {
-    btnDl.addEventListener('click', function() {
-      try {
-        var content = getCleanHTML();
-        var blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-        var url  = URL.createObjectURL(blob);
-        var a    = document.createElement('a');
-        a.href     = url;
-        a.download = 'index.html';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 100);
-      } catch(e) { alert('Erro no download: ' + e.message); }
-    });
-  }
-
-  if (btnCp) {
-    btnCp.addEventListener('click', function() {
-      try {
-        var content = getCleanHTML();
-        navigator.clipboard.writeText(content).then(function() {
-          if (copyOk) {
-            copyOk.style.display = 'inline';
-            setTimeout(function() { copyOk.style.display = 'none'; }, 2500);
-          }
-        }).catch(function(err) {
-          // Fallback for older browsers
-          var ta = document.createElement('textarea');
-          ta.value = content;
-          ta.style.position = 'fixed';
-          ta.style.opacity  = '0';
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          if (copyOk) {
-            copyOk.style.display = 'inline';
-            setTimeout(function() { copyOk.style.display = 'none'; }, 2500);
-          }
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useCallback, useRef, useEffect } = React;
+    const { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } = Recharts;
+
+    // ─── CONSTANTS ──────────────────────────────────────────────────────────────
+    const CLASSES = [
+      { key:"rf_cdi",       label:"RF CDI",                      group:"Brasil",        color:"#10b981" },
+      { key:"multimercado", label:"MultiMercado",                 group:"Brasil",        color:"#06b6d4" },
+      { key:"fii",          label:"FII",                          group:"Brasil",        color:"#f59e0b" },
+      { key:"rf_inf",       label:"RF Inflação",                  group:"Brasil",        color:"#84cc16" },
+      { key:"td_inf",       label:"TD Inflação",                  group:"Brasil",        color:"#22c55e" },
+      { key:"td_pre",       label:"TD Prefixado",                 group:"Brasil",        color:"#14b8a6" },
+      { key:"br_stocks",    label:"BR Stocks",                    group:"Brasil",        color:"#ef4444" },
+      { key:"alt_br",       label:"Ativos Reais e Alternativos", group:"Brasil",        color:"#eab308" },
+      { key:"btc",          label:"BTC (Digital Gold)",           group:"Cripto",        color:"#f59e0b" },
+      { key:"cripto_ex",    label:"Cripto ex BTC",                group:"Cripto",        color:"#fb923c" },
+      { key:"sp500",        label:"S&P 500",                      group:"Internacional", color:"#8b5cf6" },
+      { key:"tech",         label:"Tech (Nasdaq)",                group:"Internacional", color:"#a855f7" },
+      { key:"tbills",       label:"T-Bills/Pré USD",              group:"Internacional", color:"#64748b" },
+      { key:"bonds",        label:"Bonds USD",                    group:"Internacional", color:"#475569" },
+      { key:"us_stocks",    label:"US Stocks",                    group:"Internacional", color:"#6366f1" },
+      { key:"energy",       label:"Energy",                       group:"Internacional", color:"#dc2626" },
+      { key:"alt_intl",     label:"Ativos Reais e Alternativos", group:"Internacional", color:"#f97316" },
+    ];
+    const GROUPS = ["Brasil","Cripto","Internacional"];
+    const GROUP_COLORS = { Brasil:"#00d4ff", Cripto:"#f59e0b", Internacional:"#a855f7" };
+    const TARGET = { rf_cdi:10,multimercado:7,fii:6,rf_inf:10,td_inf:7,td_pre:5,br_stocks:5,alt_br:0,btc:7,cripto_ex:3,sp500:10,tech:10,tbills:2,bonds:8,us_stocks:3,energy:7,alt_intl:0 };
+
+    const CRIPTO_POSITIONS = [
+      { id:"steth",  label:"Lido stETH", symbol:"stETH",  qty:1.4999,    color:"#06b6d4", classKey:"cripto_ex" },
+      { id:"sol",    label:"Solana",      symbol:"SOL",     qty:8.15784,   color:"#8b5cf6", classKey:"cripto_ex" },
+      { id:"hbar",   label:"Hedera",      symbol:"HBAR",    qty:2170.68,   color:"#14b8a6", classKey:"cripto_ex" },
+      { id:"eth",    label:"Ethereum",    symbol:"ETH",     qty:0.0008786, color:"#0ea5e9", classKey:"cripto_ex" },
+      { id:"yieldx", label:"YIELDX",     symbol:"YIELDX",  qty:199.27,    color:"#10b981", classKey:"cripto_ex" },
+      { id:"xpt",    label:"XPToken",     symbol:"XPT",     qty:0.001,     color:"#ef4444", classKey:"cripto_ex" },
+    ];
+
+    const FALLBACK_CRIPTO = {
+      steth:  { valueBRL: 15805.84, brlPerUnit: 15805.84/1.4999 },
+      sol:    { valueBRL: 3746.84,  brlPerUnit: 3746.84/8.15784  },
+      hbar:   { valueBRL: 1145.57,  brlPerUnit: 1145.57/2170.68  },
+      eth:    { valueBRL: 9.25,     brlPerUnit: 9.25/0.0008786   },
+      yieldx: { valueBRL: 0.02,     brlPerUnit: 0.02/199.27      },
+      xpt:    { valueBRL: null,     brlPerUnit: null              },
+      usdBrl: 5.20,
+      fonte: "Fallback: Ledger 15/02/2026",
+      ts: new Date("2026-02-15").getTime(),
+      isFallback: true,
+    };
+
+    const BROKER_POSITIONS = [
+      { id:"borr", label:"Borr Drilling",       symbol:"BORR", qty:763, color:"#ef4444", classKey:"energy"    },
+      { id:"ne",   label:"Noble Corp",          symbol:"NE",   qty:13,  color:"#dc2626", classKey:"energy"    },
+      { id:"val",  label:"Valaris",             symbol:"VAL",  qty:7,   color:"#fb923c", classKey:"energy"    },
+      { id:"euhy", label:"iSh EUR HY Corp Bnd", symbol:"EUHY", qty:22,  color:"#64748b", classKey:"bonds"     },
+      { id:"qqq",  label:"Invesco QQQ",         symbol:"QQQ",  qty:3,   color:"#a855f7", classKey:"tech"      },
+      { id:"schd", label:"Schwab SCHD",         symbol:"SCHD", qty:57,  color:"#6366f1", classKey:"us_stocks" },
+      { id:"tmf",  label:"TMF 3x Treasury",     symbol:"TMF",  qty:30,  color:"#64748b", classKey:"bonds"     },
+      { id:"urnm", label:"Sprott Uranium",      symbol:"URNM", qty:43,  color:"#f97316", classKey:"energy"    },
+    ];
+
+    const BASE_MAP = {
+      "rf cdi":"rf_cdi","cdi":"rf_cdi","caixa":"rf_cdi","pos fixado":"rf_cdi","selic":"rf_cdi","liquidez":"rf_cdi","cdb":"rf_cdi",
+      "multimercado":"multimercado","multi mercado":"multimercado","macro":"multimercado","hedge":"multimercado",
+      "fii":"fii","fundos imobiliarios":"fii","fundos imobiliários":"fii","fiis":"fii","ifix":"fii","fundo imobiliario":"fii",
+      "rf inf":"rf_inf","rf inflacao":"rf_inf","cri":"rf_inf","lci":"rf_inf","lca":"rf_inf","cra":"rf_inf","debenture":"rf_inf","debênture":"rf_inf","incentivada":"rf_inf",
+      "td inf":"td_inf","td inflacao":"td_inf","tesouro ipca":"td_inf","ipca+":"td_inf","ntnb":"td_inf","ima-b":"td_inf",
+      "td pre":"td_pre","td prefixado":"td_pre","tesouro prefixado":"td_pre","ltn":"td_pre","prefixado":"td_pre",
+      "br stocks":"br_stocks","acoes br":"br_stocks","bolsa":"br_stocks","ibovespa":"br_stocks","ibov":"br_stocks","acoes":"br_stocks","ações":"br_stocks",
+      "alt br":"alt_br","alternativos br":"alt_br","fidc":"alt_br","fiagro":"alt_br","infra":"alt_br","infraestrutura":"alt_br","private equity":"alt_br","venture capital br":"alt_br",
+      "btc":"btc","bitcoin":"btc",
+      "cripto ex btc":"cripto_ex","altcoin":"cripto_ex","ethereum":"cripto_ex","solana":"cripto_ex","cripto":"cripto_ex","crypto":"cripto_ex",
+      "s&p":"sp500","sp500":"sp500","spy":"sp500","ivvb11":"sp500","s&p 500":"sp500",
+      "tech":"tech","nasdaq":"tech","tecnologia":"tech","qqq":"tech","fomo11":"tech",
+      "t-bills":"tbills","tbills":"tbills","t bills":"tbills",
+      "bonds":"bonds","bonds usd":"bonds","treasuries":"bonds","treasury":"bonds",
+      "us stocks":"us_stocks","acwi":"us_stocks","schd":"us_stocks",
+      "energy":"energy","energia":"energy","petroleo":"energy","petróleo":"energy","oil":"energy","xle":"energy","urnm":"energy","uranium":"energy",
+      "alt intl":"alt_intl","alternativos":"alt_intl","commodities":"alt_intl","reit":"alt_intl","reits":"alt_intl","venture capital":"alt_intl","private equity intl":"alt_intl","infrastructure":"alt_intl",
+    };
+
+    // ─── HELPERS ────────────────────────────────────────────────────────────────
+    function tryMapKey(label, customMap) {
+      const l = label.toLowerCase().trim();
+      if (customMap[l]) return customMap[l];
+      for (const [p,k] of Object.entries(BASE_MAP)) if (l.includes(p)) return k;
+      return "";
+    }
+
+    function parseCSV(text) {
+      const res = {};
+      for (const line of text.split("\n").filter(l=>l.trim())) {
+        const parts = line.split(/[,;\t]/).map(p=>p.trim().replace(/"/g,""));
+        if (parts.length>=2) {
+          const label=parts[0], val=parseFloat(parts[parts.length-1].replace("%","").replace(",","."));
+          if (label && !isNaN(val) && val>0) res[label]=val;
+        }
+      }
+      return res;
+    }
+
+    const fmt=(n,d=0)=>n===undefined||n===null||isNaN(n)?"—":`R$ ${Number(n).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d})}`;
+    const fmtUSD=(n,d=2)=>n===undefined||n===null||isNaN(n)?"—":`$ ${Number(n).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d})}`;
+    const pct=(n)=>n===undefined?0:Number(n).toFixed(1)+"%";
+
+    // Storage adapter for localStorage
+    const storage = {
+      get: (key) => {
+        try {
+          const val = localStorage.getItem(key);
+          return val ? { value: val } : null;
+        } catch { return null; }
+      },
+      set: (key, value) => {
+        try {
+          localStorage.setItem(key, value);
+          return { key, value };
+        } catch { return null; }
+      }
+    };
+
+    // ─── MAIN APP ───────────────────────────────────────────────────────────────
+    function App() {
+      const [tab,setTab]=useState("carteira");
+      const [mode,setMode]=useState("target");
+      const [customAlloc,setCustomAlloc]=useState({...TARGET});
+      const [patrimonio,setPatrimonio]=useState("");
+      const [customMap,setCustomMap]=useState({});
+      const [history,setHistory]=useState([]);
+      const [expandedH,setExpandedH]=useState(null);
+      const [expandedClass,setExpandedClass]=useState({});
+      const [showPie,setShowPie]=useState(false);
+      const [permTab,setPermTab]=useState("cripto");
+      const [fidcItems,setFidcItems]=useState([]);
+      const [ativosReaisItems,setAtivosReaisItems]=useState([]);
+      const [startupsItems,setStartupsItems]=useState([]);
+      const [schwabItems,setSchwabItems]=useState([]);
+      const [editingManual,setEditingManual]=useState({type:"",name:"",valueBRL:"",classKey:""});
+      const [editingSchwab,setEditingSchwab]=useState({symbol:"",qty:"",classKey:""});
+      const [saveMsg,setSaveMsg]=useState("");
+
+      useEffect(()=>{
+        try{const r=storage.get("asset_mappings");if(r)setCustomMap(JSON.parse(r.value));}catch{}
+        try{const r=storage.get("portfolio_history");if(r){const h=JSON.parse(r.value);setHistory(h);if(h.length>0){setCustomAlloc({...h[0].alloc});setMode("custom");}}}catch{}
+        try{const r=storage.get("fidc_items");if(r)setFidcItems(JSON.parse(r.value));}catch{}
+        try{const r=storage.get("ativos_reais_items");if(r)setAtivosReaisItems(JSON.parse(r.value));}catch{}
+        try{const r=storage.get("startups_items");if(r)setStartupsItems(JSON.parse(r.value));}catch{}
+        try{
+          const r=storage.get("schwab_items");
+          if(r)setSchwabItems(JSON.parse(r.value));
+          else setSchwabItems(BROKER_POSITIONS.map(p=>({...p,id:p.id||Date.now().toString()+Math.random()})));
+        }catch{setSchwabItems(BROKER_POSITIONS.map(p=>({...p,id:p.id||Date.now().toString()+Math.random()})));}
+      },[]);
+
+      const persist=async(map,hist)=>{
+        if(map!==undefined)storage.set("asset_mappings",JSON.stringify(map));
+        if(hist!==undefined)storage.set("portfolio_history",JSON.stringify(hist));
+      };
+
+      const persistManual=(type,items)=>{
+        const key=type==="fidc"?"fidc_items":type==="ativos"?"ativos_reais_items":"startups_items";
+        storage.set(key,JSON.stringify(items));
+      };
+
+      const persistSchwab=(items)=>{
+        storage.set("schwab_items",JSON.stringify(items));
+      };
+
+      const saveCarteira=useCallback(async()=>{
+        try{await persist(customMap,history);setSaveMsg("✓ Salvo");setTimeout(()=>setSaveMsg(""),2000);}
+        catch{setSaveMsg("✕ Erro");}
+      },[customMap,history]);
+
+      function calcCriptoPortfolio(){
+        const rate=FALLBACK_CRIPTO.usdBrl;
+        return CRIPTO_POSITIONS.map(pos=>{
+          const fb=FALLBACK_CRIPTO[pos.id];
+          let valueBRL=null,priceUSD=null,valueUSD=null;
+          if(fb&&fb.brlPerUnit!=null){valueBRL=pos.qty*fb.brlPerUnit;priceUSD=fb.brlPerUnit/rate;valueUSD=valueBRL/rate;}
+          return {...pos,priceUSD,valueUSD,valueBRL,isFallback:true};
         });
-      } catch(e) { alert('Erro ao copiar: ' + e.message); }
-    });
-  }
-}
+      }
 
-// ─── GITHUB LINK ───────────────────────────────────
-function buildGhLink() {
-  var user = document.getElementById('ghUser').value.trim();
-  var repo = document.getElementById('ghRepo').value.trim();
-  var el   = document.getElementById('ghResult');
-  if (!el) return;
-  if (!user) { el.textContent = '⚠ informe o usuário'; return; }
-  if (!repo) { el.textContent = '⚠ informe o nome do repositório'; return; }
-  var url = 'https://' + user + '.github.io/' + repo;
-  el.innerHTML = '→ <a href="' + url + '" target="_blank">' + url + '</a>';
-}
+      function calcBrokerPortfolio(){
+        return schwabItems.map(pos=>({...pos,priceUSD:null,valueUSD:null,valueBRL:null}));
+      }
 
-// ─── FOOTER DATE ───────────────────────────────────
-function initFooter() {
-  var el = document.getElementById('footerDate');
-  if (el) el.textContent = new Date().toLocaleDateString('pt-BR', { year:'numeric', month:'long', day:'numeric' });
-}
+      function getPermanentBrlValues(){
+        const brl={};
+        calcCriptoPortfolio().forEach(p=>{if(p.valueBRL!=null) brl[p.classKey]=(brl[p.classKey]||0)+p.valueBRL;});
+        [...fidcItems,...ativosReaisItems,...startupsItems].forEach(item=>{
+          if(item.classKey&&item.valueBRL>0) brl[item.classKey]=(brl[item.classKey]||0)+item.valueBRL;
+        });
+        return brl;
+      }
 
-// ─── BOOT ──────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  loadState();
-  fullRender();
-  initDailyGrifo();
-  initTabs();
-  initReadButtons();
-  initExport();
-  initFooter();
-});
-</script>
+      const reclassifyAsset=useCallback(async(rawName, oldClassKey, newClassKey)=>{
+        if(!history.length||!newClassKey||newClassKey===oldClassKey) return;
+        const entry={...history[0],mappings:[...history[0].mappings]};
+        const rate=entry.usdRate||5.22;
+        const idx=entry.mappings.findIndex(m=>m.raw===rawName);
+        if(idx===-1) return;
+        const mapping={...entry.mappings[idx],classKey:newClassKey};
+        entry.mappings[idx]=mapping;
+        const brl=mapping.currency==="USD"?mapping.rawVal*rate:mapping.rawVal;
+        const newBrlValues={...entry.brlValues};
+        newBrlValues[oldClassKey]=Math.max(0,(newBrlValues[oldClassKey]||0)-brl);
+        newBrlValues[newClassKey]=(newBrlValues[newClassKey]||0)+brl;
+        const totalBRL=Object.values(newBrlValues).reduce((a,b)=>a+b,0);
+        const newAlloc={};
+        CLASSES.forEach(c=>{newAlloc[c.key]=totalBRL>0?+((newBrlValues[c.key]||0)/totalBRL*100).toFixed(2):0;});
+        entry.brlValues=newBrlValues;entry.alloc=newAlloc;
+        const newHist=[entry,...history.slice(1)];
+        const lkey=rawName.toLowerCase().trim();
+        const updMap={...customMap,[lkey]:newClassKey};
+        setHistory(newHist);setCustomMap(updMap);setCustomAlloc(newAlloc);
+        await persist(updMap,newHist);
+      },[history,customMap]);
+
+      const addManualItem=useCallback((type)=>{
+        const {name,valueBRL,classKey}=editingManual;
+        if(!name||!valueBRL||!classKey) return;
+        const val=parseFloat(valueBRL);
+        if(isNaN(val)||val<=0) return;
+        const item={id:Date.now().toString(),name,valueBRL:val,classKey};
+        if(type==="fidc"){const n=[...fidcItems,item];setFidcItems(n);persistManual("fidc",n);}
+        else if(type==="ativos"){const n=[...ativosReaisItems,item];setAtivosReaisItems(n);persistManual("ativos",n);}
+        else if(type==="startups"){const n=[...startupsItems,item];setStartupsItems(n);persistManual("startups",n);}
+        setEditingManual({type:"",name:"",valueBRL:"",classKey:""});
+      },[editingManual,fidcItems,ativosReaisItems,startupsItems]);
+
+      const removeManualItem=useCallback((type,id)=>{
+        if(type==="fidc"){const n=fidcItems.filter(i=>i.id!==id);setFidcItems(n);persistManual("fidc",n);}
+        else if(type==="ativos"){const n=ativosReaisItems.filter(i=>i.id!==id);setAtivosReaisItems(n);persistManual("ativos",n);}
+        else if(type==="startups"){const n=startupsItems.filter(i=>i.id!==id);setStartupsItems(n);persistManual("startups",n);}
+      },[fidcItems,ativosReaisItems,startupsItems]);
+
+      const updateManualItem=useCallback((type,id,field,val)=>{
+        if(type==="fidc"){const n=fidcItems.map(i=>i.id===id?{...i,[field]:field==="valueBRL"?parseFloat(val)||0:val}:i);setFidcItems(n);persistManual("fidc",n);}
+        else if(type==="ativos"){const n=ativosReaisItems.map(i=>i.id===id?{...i,[field]:field==="valueBRL"?parseFloat(val)||0:val}:i);setAtivosReaisItems(n);persistManual("ativos",n);}
+        else if(type==="startups"){const n=startupsItems.map(i=>i.id===id?{...i,[field]:field==="valueBRL"?parseFloat(val)||0:val}:i);setStartupsItems(n);persistManual("startups",n);}
+      },[fidcItems,ativosReaisItems,startupsItems]);
+
+      const addSchwabItem=useCallback(()=>{
+        const {symbol,qty,classKey}=editingSchwab;
+        if(!symbol||!qty||!classKey) return;
+        const q=parseFloat(qty);
+        if(isNaN(q)||q<=0) return;
+        const item={id:symbol.toLowerCase(),label:symbol,symbol:symbol.toUpperCase(),qty:q,color:"#6366f1",classKey};
+        const n=[...schwabItems,item];
+        setSchwabItems(n);
+        persistSchwab(n);
+        setEditingSchwab({symbol:"",qty:"",classKey:""});
+      },[editingSchwab,schwabItems]);
+
+      const removeSchwabItem=useCallback((id)=>{
+        const n=schwabItems.filter(i=>i.id!==id);
+        setSchwabItems(n);
+        persistSchwab(n);
+      },[schwabItems]);
+
+      const updateSchwabItem=useCallback((id,field,val)=>{
+        const n=schwabItems.map(i=>i.id===id?{...i,[field]:field==="qty"?parseFloat(val)||0:val}:i);
+        setSchwabItems(n);
+        persistSchwab(n);
+      },[schwabItems]);
+
+      function buildDetailedByClass(){
+        const result={};
+        const latest=history[0];
+        if(latest?.mappings){
+          const rate=latest.usdRate||5.22;
+          latest.mappings.forEach(m=>{
+            if(m.ignore||!m.classKey) return;
+            const brl=m.currency==="USD"?m.rawVal*rate:m.rawVal;
+            if(!result[m.classKey]) result[m.classKey]=[];
+            result[m.classKey].push({name:m.raw,valueBRL:brl,source:m.source||"manual",isPerm:false});
+          });
+        }
+        calcCriptoPortfolio().forEach(p=>{
+          if(p.valueBRL==null&&!p.isFallback) return;
+          const vBRL=p.valueBRL||0;
+          if(!result["cripto_ex"]) result["cripto_ex"]=[];
+          result["cripto_ex"].push({name:`${p.label} (${p.symbol})`,valueBRL:vBRL,source:"perm",symbol:p.symbol,priceUSD:p.priceUSD,qty:p.qty,isPerm:true,isFallback:p.isFallback,color:p.color});
+        });
+        const bp=calcBrokerPortfolio();
+        if(bp) bp.forEach(p=>{
+          if(p.valueBRL==null) return;
+          if(!result[p.classKey]) result[p.classKey]=[];
+          result[p.classKey].push({name:`${p.label} (${p.symbol})`,valueBRL:p.valueBRL,source:"perm",symbol:p.symbol,priceUSD:p.priceUSD,qty:p.qty,isPerm:true,color:p.color});
+        });
+        [...fidcItems,...ativosReaisItems,...startupsItems].forEach(item=>{
+          if(!item.classKey||item.valueBRL<=0) return;
+          if(!result[item.classKey]) result[item.classKey]=[];
+          result[item.classKey].push({name:item.name,valueBRL:item.valueBRL,source:"perm",isPerm:true,isManual:true});
+        });
+        return result;
+      }
+
+      function calc10k(){
+        const al=mode==="target"?TARGET:customAlloc;const pat=parseFloat(patrimonio)||0;const newTotal=pat+10000;
+        if(pat===0) return CLASSES.map(c=>({...c,gap:TARGET[c.key]-al[c.key]})).filter(c=>c.gap>0).sort((a,b)=>b.gap-a.gap).slice(0,3).map(c=>({label:c.label,color:c.color,gap:c.gap,amount:null}));
+        const recs=[];let budget=10000;
+        for(const c of [...CLASSES.map(c=>({...c,deficit:Math.max(0,(TARGET[c.key]/100)*newTotal-(al[c.key]/100)*pat)}))].filter(c=>c.deficit>0).sort((a,b)=>b.deficit-a.deficit)){
+          if(budget<=0)break;const a=Math.min(c.deficit,budget);recs.push({label:c.label,color:c.color,amount:a,pct:(a/10000*100).toFixed(0)});budget-=a;
+        }
+        return recs;
+      }
+
+      const alloc=mode==="target"?TARGET:customAlloc;
+      const total=Object.values(alloc).reduce((a,b)=>a+Number(b),0);
+      const valid=Math.abs(total-100)<1;
+      const groupTotals=GROUPS.reduce((acc,g)=>({...acc,[g]:CLASSES.filter(c=>c.group===g).reduce((s,c)=>s+Number(alloc[c.key]),0)}),{});
+      const recs10k=calc10k();
+      const learnedCount=Object.keys(customMap).length;
+      const criptoPort=calcCriptoPortfolio();
+      const brokerPort=calcBrokerPortfolio();
+      const criptoTotalBRL=criptoPort.reduce((s,p)=>s+(p.valueBRL||0),0);
+      const brokerTotalBRL=brokerPort?.reduce((s,p)=>s+(p.valueBRL||0),0)||0;
+      const fidcTotal=fidcItems.reduce((s,i)=>s+i.valueBRL,0);
+      const ativosTotal=ativosReaisItems.reduce((s,i)=>s+i.valueBRL,0);
+      const startupsTotal=startupsItems.reduce((s,i)=>s+i.valueBRL,0);
+      const permTotalBRL=criptoTotalBRL+brokerTotalBRL+fidcTotal+ativosTotal+startupsTotal;
+      const criptoIsFallback=true;
+      const latestImport=history[0];
+      const detailedByClass=mode==="custom"?buildDetailedByClass():{};
+      const pieData=CLASSES.filter(c=>alloc[c.key]>0.5).map(c=>({name:c.label,value:+alloc[c.key].toFixed(1),color:c.color,group:c.group}));
+
+      // ─── STYLES ─────────────────────────────────────────────────────────────
+      const S={
+        page:  {fontFamily:"'Playfair Display','Georgia',serif",background:"#000",minHeight:"100vh",color:"#f8fafc",padding:"0"},
+        hdr:   {background:"#000",borderBottom:"1px solid rgba(0,212,255,0.15)",padding:"48px 60px"},
+        panel: {background:"#000",padding:"60px 80px",maxWidth:1400,margin:"0 auto"},
+        card:  (c)=>({background:"rgba(0,0,0,0.4)",borderRadius:20,padding:"32px 36px",marginBottom:20,border:`1px solid ${c?`${c}25`:"rgba(148,163,184,0.1)"}`,boxShadow:c?`0 0 40px ${c}08`:"none",transition:"all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"}),
+        neonCard: (c)=>({background:"rgba(0,0,0,0.6)",borderRadius:24,padding:"28px 32px",border:`1px solid ${c}`,boxShadow:`0 0 60px ${c}20, 0 20px 60px rgba(0,0,0,0.4)`,transition:"all 0.4s ease"}),
+        tab:   (on)=>({padding:"18px 32px",border:"none",cursor:"pointer",fontWeight:on?500:400,fontSize:12,letterSpacing:"1.5px",background:"transparent",color:on?"#00d4ff":"#64748b",borderBottom:on?"1px solid #00d4ff":"1px solid transparent",transition:"all 0.3s ease",fontFamily:"'Inter',-apple-system,sans-serif",textTransform:"uppercase"}),
+        mode:  (on)=>({flex:1,padding:"20px 24px",borderRadius:16,border:on?"1px solid #00d4ff":"1px solid rgba(100,116,139,0.15)",cursor:"pointer",background:on?"rgba(0,212,255,0.04)":"transparent",color:on?"#00d4ff":"#94a3b8",fontWeight:on?600:400,fontSize:14,textAlign:"center",transition:"all 0.4s ease",fontFamily:"'Inter',sans-serif",boxShadow:on?"0 0 40px rgba(0,212,255,0.12)":"none"}),
+        btn:   (ok,c="#00d4ff")=>({padding:"16px 32px",borderRadius:12,border:ok?`1px solid ${c}`:"1px solid rgba(30,41,59,0.5)",cursor:ok?"pointer":"not-allowed",background:ok?"transparent":"rgba(15,15,20,0.3)",color:ok?c:"#475569",fontWeight:600,fontSize:12,transition:"all 0.3s ease",fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase",boxShadow:ok?`0 0 30px ${c}15`:"none"}),
+        inp:   {background:"rgba(0,0,0,0.6)",border:"1px solid rgba(100,116,139,0.2)",borderRadius:12,padding:"16px 20px",color:"#f8fafc",fontSize:14,transition:"all 0.3s ease",fontFamily:"'Inter',sans-serif",outline:"none"},
+        sel:   {background:"rgba(0,0,0,0.6)",border:"1px solid rgba(100,116,139,0.2)",borderRadius:12,padding:"14px 18px",color:"#f8fafc",fontSize:13,cursor:"pointer",transition:"all 0.3s ease",fontFamily:"'Inter',sans-serif",outline:"none"},
+      };
+
+      const Badge=({text,color="#00d4ff"})=><span style={{fontSize:10,fontWeight:700,color,background:`${color}15`,border:`1px solid ${color}40`,padding:"4px 10px",letterSpacing:"1px",textTransform:"uppercase",fontFamily:"'Inter',sans-serif"}}>{text}</span>;
+
+      const AssetRows=({classKey,classTotalBRL})=>{
+        const items=detailedByClass[classKey];
+        if(!items||items.length===0) return null;
+        const isOpen=expandedClass[classKey];
+        const cls=CLASSES.find(c=>c.key===classKey);
+        return(
+          <div style={{marginTop:16,borderTop:`1px solid ${cls?.color}20`,paddingTop:16}}>
+            <button onClick={()=>setExpandedClass(p=>({...p,[classKey]:!p[classKey]}))} style={{background:"none",border:"none",cursor:"pointer",padding:0,fontSize:12,color:cls?.color,fontFamily:"'Inter',sans-serif",letterSpacing:"0.5px",textTransform:"uppercase",fontWeight:600}}>
+              {isOpen?"▼":"▶"} {items.length} ATIVO{items.length>1?"S":""}
+            </button>
+            {isOpen&&(
+              <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:8}}>
+                {items.sort((a,b)=>b.valueBRL-a.valueBRL).map((item,i)=>(
+                  <div key={i} style={{background:"rgba(0,0,0,0.4)",border:`1px solid ${item.color||cls?.color}30`,padding:"14px 18px",display:"flex",alignItems:"center",gap:12,fontSize:13,fontFamily:"'Inter',sans-serif"}}>
+                    <span style={{flex:1,color:"#cbd5e1",fontWeight:500}}>{item.name}</span>
+                    {item.isFallback&&<Badge text="fallback" color="#f59e0b"/>}
+                    {item.priceUSD&&<span style={{color:"#64748b",fontSize:11}}>@{fmtUSD(item.priceUSD)}</span>}
+                    <span style={{fontWeight:700,color:item.color||cls?.color,fontSize:15}}>{fmt(item.valueBRL)}</span>
+                    {!item.isPerm&&(
+                      <select value={classKey} style={{...S.sel,fontSize:11,padding:"8px 12px"}} onChange={e=>reclassifyAsset(item.name,classKey,e.target.value)}>
+                        {GROUPS.map(g=>(
+                          <optgroup key={g} label={g}>
+                            {CLASSES.filter(c=>c.group===g).map(c=><option key={c.key} value={c.key}>{c.label}</option>)}
+                          </optgroup>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const PieTooltip=({active,payload})=>{
+        if(!active||!payload?.length) return null;
+        const d=payload[0].payload;
+        return(
+          <div style={{background:"rgba(0,0,0,0.95)",backdropFilter:"blur(10px)",border:`2px solid ${d.color}`,padding:"12px 16px",fontSize:13,boxShadow:`0 0 20px ${d.color}40`,fontFamily:"'Inter',sans-serif"}}>
+            <div style={{fontWeight:700,marginBottom:4,color:d.color}}>{d.name}</div>
+            <div style={{color:"#94a3b8"}}>{d.value}% · {d.group}</div>
+          </div>
+        );
+      };
+
+      const ManualItemForm=({type,title,items,total})=>(
+        <div>
+          <div style={{marginBottom:20}}>
+            <h3 style={{margin:"0 0 8px",fontSize:24,fontWeight:400,color:"#f8fafc",fontFamily:"'Playfair Display',serif",letterSpacing:"1px"}}>{title}</h3>
+            <p style={{margin:0,fontSize:14,color:"#64748b",fontFamily:"'Inter',sans-serif"}}>Total: <span style={{color:"#00d4ff",fontWeight:700}}>{fmt(total)}</span></p>
+          </div>
+          <div style={{background:"rgba(0,212,255,0.05)",border:"2px solid rgba(0,212,255,0.2)",borderRadius:16,padding:20,marginBottom:20}}>
+            <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 2fr auto",gap:12,alignItems:"end"}}>
+              <div><label style={{fontSize:11,color:"#94a3b8",display:"block",marginBottom:8,fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Nome</label>
+                <input value={editingManual.type===type?editingManual.name:""} onChange={e=>setEditingManual({...editingManual,type,name:e.target.value})} placeholder="FIDC XYZ" style={{...S.inp,width:"100%"}}/>
+              </div>
+              <div><label style={{fontSize:11,color:"#94a3b8",display:"block",marginBottom:8,fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Valor (R$)</label>
+                <input value={editingManual.type===type?editingManual.valueBRL:""} onChange={e=>setEditingManual({...editingManual,type,valueBRL:e.target.value})} placeholder="10000" style={{...S.inp,width:"100%"}}/>
+              </div>
+              <div><label style={{fontSize:11,color:"#94a3b8",display:"block",marginBottom:8,fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Classe</label>
+                <select value={editingManual.type===type?editingManual.classKey:""} onChange={e=>setEditingManual({...editingManual,type,classKey:e.target.value})} style={{...S.sel,width:"100%"}}>
+                  <option value="">Selecione</option>
+                  {GROUPS.map(g=>(
+                    <optgroup key={g} label={g}>
+                      {CLASSES.filter(c=>c.group===g).map(c=><option key={c.key} value={c.key}>{c.label}</option>)}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+              <button onClick={()=>addManualItem(type)} style={{...S.btn(editingManual.type===type&&editingManual.name&&editingManual.valueBRL&&editingManual.classKey,"#00d4ff"),padding:"14px 20px"}}>Add</button>
+            </div>
+          </div>
+          {items.length>0&&(
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {items.map(item=>{
+                const cls=CLASSES.find(c=>c.key===item.classKey);
+                return(
+                  <div key={item.id} style={{background:"rgba(0,0,0,0.4)",border:`1px solid ${cls?.color}30`,borderRadius:16,padding:"16px 20px",display:"flex",alignItems:"center",gap:14}}>
+                    <input value={item.name} onChange={e=>updateManualItem(type,item.id,"name",e.target.value)} style={{...S.inp,flex:1,padding:"12px 16px"}}/>
+                    <input value={item.valueBRL} onChange={e=>updateManualItem(type,item.id,"valueBRL",e.target.value)} style={{...S.inp,width:140,padding:"12px 16px"}}/>
+                    <select value={item.classKey} onChange={e=>updateManualItem(type,item.id,"classKey",e.target.value)} style={{...S.sel,width:160}}>
+                      {GROUPS.map(g=>(
+                        <optgroup key={g} label={g}>
+                          {CLASSES.filter(c=>c.group===g).map(c=><option key={c.key} value={c.key}>{c.label}</option>)}
+                        </optgroup>
+                      ))}
+                    </select>
+                    <Badge text={cls?.label||"—"} color={cls?.color}/>
+                    <button onClick={()=>removeManualItem(type,item.id)} style={{background:"none",border:`2px solid #ef4444`,color:"#ef4444",cursor:"pointer",fontSize:14,padding:"10px 14px",borderRadius:10,fontWeight:700,transition:"all 0.3s ease",fontFamily:"'Inter',sans-serif"}}>✕</button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+
+      return(
+        <div style={S.page}>
+          {/* HEADER */}
+          <div style={S.hdr}>
+            <div style={{maxWidth:1400,margin:"0 auto",display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+              <div>
+                <h1 style={{margin:"0 0 16px",fontSize:56,fontWeight:400,color:"#f8fafc",fontFamily:"'Playfair Display',serif",letterSpacing:"3px",lineHeight:1.2}}>
+                  Análise de<br/>Investimentos
+                </h1>
+                <p style={{margin:0,fontSize:13,color:"#64748b",fontFamily:"'Inter',sans-serif",letterSpacing:"2px",textTransform:"uppercase"}}>Guga · 37 anos · Moderado-Conservador</p>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:10,alignItems:"flex-end",marginTop:8}}>
+                {learnedCount>0&&<Badge text={`${learnedCount} mapeamentos`} color="#00d4ff"/>}
+                {history.length>0&&<Badge text={`${history.length} importações`} color="#10b981"/>}
+                <div style={{fontSize:11,color:"#475569",fontFamily:"'Inter',sans-serif",letterSpacing:"1px"}}>Selic 15% · BTC = Ouro Digital</div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{maxWidth:1400,margin:"0 auto"}}>
+            <div style={{display:"flex",gap:0,marginBottom:48,borderBottom:"1px solid rgba(100,116,139,0.1)"}}>
+              {[["carteira","Carteira"],["permanentes","Permanentes"]].map(([k,l])=>(
+                <button key={k} onClick={()=>setTab(k)} style={S.tab(tab===k)}>{l}</button>
+              ))}
+            </div>
+
+            <div style={S.panel}>
+
+              {/* CARTEIRA */}
+              {tab==="carteira"&&(
+                <div>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:32}}>
+                    <div style={{display:"flex",gap:12}}>
+                      <button onClick={()=>setMode("target")} style={S.mode(mode==="target")}>IDEAL</button>
+                      <button onClick={()=>setMode("custom")} style={S.mode(mode==="custom")}>IMPORTADA</button>
+                    </div>
+                    <div style={{display:"flex",gap:12}}>
+                      <button onClick={()=>setShowPie(!showPie)} style={S.btn(true,showPie?"#a855f7":"#00d4ff")}>{showPie?"Chart":"Pie"}</button>
+                      {mode==="custom"&&<button onClick={saveCarteira} style={S.btn(true,"#10b981")}>{saveMsg||"Save"}</button>}
+                    </div>
+                  </div>
+
+                  {mode==="custom"&&permTotalBRL>0&&(
+                    <div style={{background:"rgba(16,185,129,0.1)",border:"2px solid rgba(16,185,129,0.3)",padding:"16px 24px",marginBottom:24,fontSize:14,color:"#10b981",fontFamily:"'Inter',sans-serif",boxShadow:"0 0 20px rgba(16,185,129,0.1)"}}>
+                      Permanentes: {fmt(permTotalBRL)}
+                      {criptoIsFallback&&<span style={{marginLeft:16,color:"#f59e0b"}}>· Cripto: fallback</span>}
+                    </div>
+                  )}
+
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:24,marginBottom:48}}>
+                    {GROUPS.map(g=><div key={g} style={{...S.neonCard(GROUP_COLORS[g]),textAlign:"center",cursor:"pointer",transform:"scale(1)",transition:"all 0.4s ease"}} onMouseEnter={e=>e.currentTarget.style.transform="scale(1.02)"} onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}><div style={{fontSize:11,color:"#94a3b8",fontFamily:"'Inter',sans-serif",letterSpacing:"2px",textTransform:"uppercase",marginBottom:12,fontWeight:500}}>{g}</div><div style={{fontSize:42,fontWeight:300,color:GROUP_COLORS[g],fontFamily:"'Playfair Display',serif",letterSpacing:"1px"}}>{groupTotals[g].toFixed(0)}<span style={{fontSize:24}}>%</span></div></div>)}
+                    <div style={{...S.neonCard(valid?"#10b981":"#ef4444"),textAlign:"center",cursor:"pointer",transform:"scale(1)",transition:"all 0.4s ease"}} onMouseEnter={e=>e.currentTarget.style.transform="scale(1.02)"} onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}><div style={{fontSize:11,color:"#94a3b8",fontFamily:"'Inter',sans-serif",letterSpacing:"2px",textTransform:"uppercase",marginBottom:12,fontWeight:500}}>Total</div><div style={{fontSize:42,fontWeight:300,color:valid?"#10b981":"#ef4444",fontFamily:"'Playfair Display',serif",letterSpacing:"1px"}}>{total.toFixed(0)}<span style={{fontSize:24}}>%</span></div></div>
+                  </div>
+
+                  {showPie&&pieData.length>0&&(
+                    <div style={{marginBottom:48,background:"rgba(0,0,0,0.4)",borderRadius:24,padding:40,border:"1px solid rgba(100,116,139,0.08)",boxShadow:"0 20px 60px rgba(0,0,0,0.4)"}}>
+                      <ResponsiveContainer width="100%" height={320}>
+                        <PieChart>
+                          <Pie data={pieData} cx="50%" cy="50%" innerRadius={90} outerRadius={140} paddingAngle={3} dataKey="value" stroke="none">
+                            {pieData.map((e,i)=><Cell key={i} fill={e.color}/>)}
+                          </Pie>
+                          <Tooltip content={<PieTooltip/>}/>
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+
+                  {GROUPS.map(g=>(
+                    <div key={g} style={{marginBottom:40}}>
+                      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:24}}>
+                        <div style={{width:60,height:1,background:`linear-gradient(90deg, ${GROUP_COLORS[g]}, transparent)`}}/>
+                        <h3 style={{margin:0,fontSize:28,fontWeight:400,color:"#f8fafc",fontFamily:"'Playfair Display',serif",letterSpacing:"2px"}}>{g}</h3>
+                        <div style={{flex:1,height:1,background:`linear-gradient(90deg, ${GROUP_COLORS[g]}, transparent)`}}/>
+                      </div>
+                      <div style={{display:"flex",flexDirection:"column",gap:16}}>
+                        {CLASSES.filter(c=>c.group===g&&(alloc[c.key]>0||mode==="target")).map(c=>{
+                          const v=alloc[c.key];const diff=mode==="custom"?v-TARGET[c.key]:null;
+                          const classBRL=latestImport?.brlValues?.[c.key]||0;
+                          return(
+                            <div key={c.key} style={{...S.card(c.color),cursor:"pointer",transform:"scale(1)"}} onMouseEnter={e=>e.currentTarget.style.transform="scale(1.01)"} onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}>
+                              <div style={{display:"flex",alignItems:"center",gap:20}}>
+                                <div style={{width:3,height:40,background:c.color,borderRadius:2}}/>
+                                <span style={{fontSize:15,color:"#cbd5e1",flex:1,fontFamily:"'Inter',sans-serif",fontWeight:500,letterSpacing:"0.3px"}}>{c.label}</span>
+                                {mode==="custom"&&classBRL>0&&<span style={{fontSize:13,color:"#64748b",fontFamily:"'Inter',sans-serif",fontWeight:400}}>{fmt(classBRL)}</span>}
+                                <span style={{fontSize:28,fontWeight:300,color:c.color,fontFamily:"'Playfair Display',serif"}}>{pct(v)}</span>
+                                {diff!==null&&Math.abs(diff)>0.1&&<span style={{fontSize:12,color:diff>0?"#10b981":"#ef4444",fontWeight:600,padding:"6px 14px",background:diff>0?"rgba(16,185,129,0.1)":"rgba(239,68,68,0.1)",borderRadius:8,fontFamily:"'Inter',sans-serif",border:`1px solid ${diff>0?"#10b98120":"#ef444420"}`}}>{diff>0?"▲":"▼"}{Math.abs(diff).toFixed(1)}pp</span>}
+                              </div>
+                              {mode==="custom"&&<AssetRows classKey={c.key} classTotalBRL={classBRL}/>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+
+                  <div style={{marginBottom:20}}>
+                    <label style={{fontSize:12,color:"#94a3b8",display:"block",marginBottom:8,fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Patrimônio (R$)</label>
+                    <input value={patrimonio} onChange={e=>setPatrimonio(e.target.value)} placeholder="500000" style={{...S.inp,width:220}}/>
+                  </div>
+
+                  {recs10k.length>0&&(
+                    <div style={{...S.card("#f59e0b"),marginBottom:20}}>
+                      <h3 style={{margin:"0 0 16px",fontSize:18,fontWeight:600,color:"#f59e0b",fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Próximos R$10.000</h3>
+                      {recs10k.map((r,i)=>(
+                        <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"12px 0",fontSize:15,borderBottom:i<recs10k.length-1?`1px solid ${r.color}20`:"none",fontFamily:"'Inter',sans-serif"}}>
+                          <span style={{fontWeight:600,color:"#cbd5e1"}}>{i+1}. {r.label}</span>
+                          <span style={{fontWeight:700,color:r.color}}>{r.amount?`${fmt(r.amount)} (${r.pct}%)`:`${r.gap.toFixed(1)}pp`}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* PERMANENTES */}
+              {tab==="permanentes"&&(
+                <div>
+                  <div style={{marginBottom:40}}>
+                    <h2 style={{margin:"0 0 12px",fontSize:42,fontWeight:300,color:"#f8fafc",fontFamily:"'Playfair Display',serif",letterSpacing:"3px"}}>Posições Permanentes</h2>
+                    <p style={{margin:0,fontSize:14,color:"#64748b",fontFamily:"'Inter',sans-serif",letterSpacing:"0.5px"}}>Somadas automaticamente · Total: <span style={{color:"#00d4ff",fontWeight:600}}>{fmt(permTotalBRL)}</span></p>
+                  </div>
+
+                  <div style={{display:"flex",gap:0,borderBottom:"1px solid rgba(100,116,139,0.1)",marginBottom:32}}>
+                    {[["cripto","Cripto"],["broker","Schwab"],["fidc","FIDC NPL"],["ativos","Ativos Reais"],["startups","Startups"]].map(([k,l])=>(
+                      <button key={k} onClick={()=>setPermTab(k)} style={{...S.tab(permTab===k),padding:"16px 28px"}}>{l}</button>
+                    ))}
+                  </div>
+
+                  {permTab==="cripto"&&(
+                    <div>
+                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
+                        <div><span style={{fontSize:16,fontWeight:600,color:"#f8fafc",fontFamily:"'Inter',sans-serif"}}>Ledger Wallet</span>
+                          <span style={{marginLeft:16,fontSize:14,color:"#f59e0b",fontFamily:"'Inter',sans-serif"}}>· Fallback</span>
+                        </div>
+                      </div>
+                      <div style={{fontSize:16,fontWeight:700,marginBottom:16,color:"#f8fafc",fontFamily:"'Inter',sans-serif"}}>Total: <span style={{color:"#f59e0b"}}>{fmt(criptoTotalBRL)}</span></div>
+                      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                        {criptoPort.map(p=>(
+                          <div key={p.id} style={{...S.card(p.color)}}>
+                            <div style={{display:"flex",alignItems:"center",gap:14}}>
+                              <span style={{flex:1,fontSize:15,fontWeight:600,color:"#cbd5e1",fontFamily:"'Inter',sans-serif"}}>{p.label}</span>
+                              <Badge text="fallback" color="#f59e0b"/>
+                              {p.priceUSD&&<span style={{fontSize:12,color:"#64748b",fontFamily:"'Inter',sans-serif"}}>@{fmtUSD(p.priceUSD)}</span>}
+                              <span style={{fontWeight:700,fontSize:16,color:p.color,fontFamily:"'Playfair Display',serif"}}>{fmt(p.valueBRL)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {permTab==="broker"&&(
+                    <div>
+                      <div style={{marginBottom:20}}>
+                        <h3 style={{margin:"0 0 8px",fontSize:24,fontWeight:400,color:"#f8fafc",fontFamily:"'Playfair Display',serif",letterSpacing:"1px"}}>Schwab Individual</h3>
+                        <p style={{margin:0,fontSize:14,color:"#64748b",fontFamily:"'Inter',sans-serif"}}>Total: <span style={{color:"#a855f7",fontWeight:700}}>{fmt(brokerTotalBRL)}</span></p>
+                      </div>
+
+                      <div style={{background:"rgba(168,85,247,0.05)",border:"2px solid rgba(168,85,247,0.2)",borderRadius:16,padding:20,marginBottom:20}}>
+                        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 2fr auto",gap:12,alignItems:"end"}}>
+                          <div><label style={{fontSize:11,color:"#94a3b8",display:"block",marginBottom:8,fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Ticker</label>
+                            <input value={editingSchwab.symbol} onChange={e=>setEditingSchwab({...editingSchwab,symbol:e.target.value})} placeholder="AAPL" style={{...S.inp,width:"100%",textTransform:"uppercase"}}/>
+                          </div>
+                          <div><label style={{fontSize:11,color:"#94a3b8",display:"block",marginBottom:8,fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Quantidade</label>
+                            <input value={editingSchwab.qty} onChange={e=>setEditingSchwab({...editingSchwab,qty:e.target.value})} placeholder="100" style={{...S.inp,width:"100%"}}/>
+                          </div>
+                          <div><label style={{fontSize:11,color:"#94a3b8",display:"block",marginBottom:8,fontFamily:"'Inter',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Classe</label>
+                            <select value={editingSchwab.classKey} onChange={e=>setEditingSchwab({...editingSchwab,classKey:e.target.value})} style={{...S.sel,width:"100%"}}>
+                              <option value="">Selecione</option>
+                              {GROUPS.map(g=>(
+                                <optgroup key={g} label={g}>
+                                  {CLASSES.filter(c=>c.group===g).map(c=><option key={c.key} value={c.key}>{c.label}</option>)}
+                                </optgroup>
+                              ))}
+                            </select>
+                          </div>
+                          <button onClick={addSchwabItem} style={{...S.btn(editingSchwab.symbol&&editingSchwab.qty&&editingSchwab.classKey,"#a855f7"),padding:"14px 20px"}}>Add</button>
+                        </div>
+                      </div>
+
+                      {schwabItems.length>0&&(
+                        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                          {schwabItems.map(item=>{
+                            const cls=CLASSES.find(c=>c.key===item.classKey);
+                            return(
+                              <div key={item.id} style={{background:"rgba(0,0,0,0.4)",border:`1px solid ${cls?.color}30`,borderRadius:16,padding:"16px 20px",display:"flex",alignItems:"center",gap:14}}>
+                                <span style={{fontSize:15,fontWeight:700,color:"#cbd5e1",fontFamily:"'Inter',sans-serif",width:80}}>{item.symbol}</span>
+                                <input type="number" value={item.qty} onChange={e=>updateSchwabItem(item.id,"qty",e.target.value)} style={{...S.inp,width:100,padding:"12px 16px"}}/>
+                                <select value={item.classKey} onChange={e=>updateSchwabItem(item.id,"classKey",e.target.value)} style={{...S.sel,width:200}}>
+                                  {GROUPS.map(g=>(
+                                    <optgroup key={g} label={g}>
+                                      {CLASSES.filter(c=>c.group===g).map(c=><option key={c.key} value={c.key}>{c.label}</option>)}
+                                    </optgroup>
+                                  ))}
+                                </select>
+                                <Badge text={cls?.label||"—"} color={cls?.color}/>
+                                <button onClick={()=>removeSchwabItem(item.id)} style={{background:"none",border:`2px solid #ef4444`,color:"#ef4444",cursor:"pointer",fontSize:14,padding:"10px 14px",borderRadius:10,fontWeight:700,transition:"all 0.3s ease",fontFamily:"'Inter',sans-serif",marginLeft:"auto"}}>✕</button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {permTab==="fidc"&&<ManualItemForm type="fidc" title="FIDC NPL" items={fidcItems} total={fidcTotal}/>}
+                  {permTab==="ativos"&&<ManualItemForm type="ativos" title="Ativos Reais" items={ativosReaisItems} total={ativosTotal}/>}
+                  {permTab==="startups"&&<ManualItemForm type="startups" title="Startups" items={startupsItems} total={startupsTotal}/>}
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
 </body>
 </html>
